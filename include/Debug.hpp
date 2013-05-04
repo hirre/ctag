@@ -1,5 +1,5 @@
 /*
- * Debug.hpp
+ *  Debug.hpp
  *
  *	This is a header file for small debug functions.
  *
@@ -30,16 +30,16 @@
 // Simple print function for debug messages
 void dbgPrint(const std::string str)
 {
-	std::cout << "[DEBUG] " << str << std::endl;
+    std::cout << "[DEBUG] " << str << std::endl;
 }
 
 // Function that prints the content of a string vector array
 void dbgPrintVector(const std::vector<std::string>& vec)
 {
-	for (const std::string& v : vec)
-	{
-		dbgPrint(std::string("in vector: " + v));
-	}
+    for (const std::string& v : vec)
+    {
+        dbgPrint(std::string("in vector: " + v));
+    }
 }
 
 #endif
