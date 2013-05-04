@@ -21,6 +21,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#define VERSION "0.1"
+
 #include <iostream>
 #include <boost/program_options.hpp>
 #include <boost/lexical_cast.hpp>
@@ -44,7 +46,8 @@ int main(int argc, char** argv)
 				"removetag,r", bpo::value<vector<string> >()->multitoken(),
 				"arg= <tag-string> <file_1 ... file_n>, e.g. \"-r helo /test/file7.txt\" or \"-r helo /test/*.txt\" for all txt files in a specific folder")(
 				"showtag,s", bpo::value<string>(),
-				"arg= <folder name or \"all\">, e.g. \"-s all\" to show all tags or \"-s /test/\" to show all tags in a specific folder");
+				"arg= <folder name or \"all\">, e.g. \"-s all\" to show all tags or \"-s /test/\" to show all tags in a specific folder")
+				("version,v", "version number");
 
 		// Map for storing input
 		bpo::variables_map vm;
@@ -95,6 +98,12 @@ int main(int argc, char** argv)
 			dbgPrint("--showtag | nr of args: " + vm.count("showtag"));
 			dbgPrint(vm["showtag"].as<string>());
 #endif
+		}
+
+		// Manage "version" flag
+		if(vm.count("version"))
+		{
+			std::cout << "Version " + string(VERSION) << std::endl;
 		}
 
 	} catch (bpo::error& e)
