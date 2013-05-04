@@ -26,8 +26,7 @@ int main(int argc, char** argv)
 		opts.add_options()("help,h", "help message")("tag,t",
 				bpo::value<vector<string> >()->multitoken(),
 				"arg= <tag-string> <file_1 ... file_n>, e.g. \"-t helo /test/file7.txt\" or \"-t helo /test/*.txt\" for all txt files in a specific folder")(
-				"removetag,r",
-				bpo::value<vector<string> >()->multitoken(),
+				"removetag,r", bpo::value<vector<string> >()->multitoken(),
 				"arg= <tag-string> <file_1 ... file_n>, e.g. \"-r helo /test/file7.txt\" or \"-r helo /test/*.txt\" for all txt files in a specific folder")(
 				"showtag,s", bpo::value<string>(),
 				"arg= <folder name or \"all\">, e.g. \"-s all\" to show all tags or \"-s /test/\" to show all tags in a specific folder");
@@ -54,7 +53,9 @@ int main(int argc, char** argv)
 			// TODO: implement tag, manage minimum number of flags
 
 #ifdef DEBUG
-			dbgPrint("--tag | nr of args: " + boost::lexical_cast<string>(vm.count("tag")));
+			dbgPrint(
+					"--tag | nr of args: "
+							+ boost::lexical_cast<string>(vm.count("tag")));
 			dbgPrintVector(vm["tag"].as<vector<string> >());
 #endif
 		}

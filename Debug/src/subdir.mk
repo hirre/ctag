@@ -17,7 +17,7 @@ CPP_DEPS += \
 src/%.o: ../src/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C++ Compiler'
-	/opt/local/bin/g++ -DDEBUG -I/usr/local/lib/boost_1_53_0/ -I/opt/local/include/gcc47/c++ -I"/Users/hirre/Dropbox/Dev/CTag/include" -I/usr/lib/clang/4.2/include -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
+	/opt/local/bin/g++ -DDEBUG -I/usr/local/lib/boost_1_53_0/ -I"/Users/hirre/Dropbox/Dev/CTag/include" -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
