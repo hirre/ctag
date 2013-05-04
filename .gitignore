@@ -40,4 +40,7 @@ Thumbs.db
 # Other
 ######################
 Debug/
-.settings
+DebugWin/
+Release/
+ReleaseWin/
+.settings/
