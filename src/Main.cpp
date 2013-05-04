@@ -1,6 +1,8 @@
 /*
  * Main.cpp
+ *
  *	This is the CTag main program entry point.
+ *
  *  Created on: 30 apr 2013
  *  Author: Hirad Asadi
  *  E-mail: hirad.asadi@gmail.com
