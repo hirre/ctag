@@ -52,6 +52,7 @@ int main(int argc, char** argv)
 		// Map for storing input
 		bpo::variables_map vm;
 
+		// Store input from cmdline in vm
 		bpo::store(bpo::command_line_parser(argc, argv).options(opts).run(),
 				vm);
 
