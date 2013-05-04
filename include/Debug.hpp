@@ -1,7 +1,7 @@
 /*
  *  Debug.hpp
  *
- *	This is a header file for small debug functions.
+ *  This is a header file for small debug functions.
  *
  *  Created on: 3 maj 2013
  *  Author: Hirad Asadi
