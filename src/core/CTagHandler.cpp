@@ -25,18 +25,23 @@
 
 #include "CTagHandler.h"
 
-namespace CTag
+namespace ctag
 {
 
 CTagHandler::CTagHandler()
 {
-    // TODO Auto-generated constructor stub
-
 }
 
 CTagHandler::~CTagHandler()
 {
-    // TODO Auto-generated destructor stub
 }
 
-} /* namespace CTag */
+/*
+ * Method to parse the input from the command line.
+ */
+void CTagHandler::parseInput(const std::vector<std::string>& argVec)
+{
+
+}
+
+} /* namespace ctag */

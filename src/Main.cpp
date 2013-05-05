@@ -29,6 +29,7 @@
 #include <boost/program_options.hpp>
 #include <boost/lexical_cast.hpp>
 #include "Debug.hpp"
+#include "core/CTagHandler.h"
 
 namespace bpo = boost::program_options;
 using namespace std;
@@ -77,43 +78,50 @@ int main(int argc, char** argv)
         // Validate inputs
         bpo::notify(vm);
 
+        // Create handler to handle input
+        ctag::CTagHandler cHandler;
+
         // Manage "tag" flag
         if (vm.count("tag"))
         {
-            // TODO: implement tag, manage minimum number of flags
-
 #ifdef DEBUG
             dbgPrint(
                     "--tag | nr of args: "
                             + boost::lexical_cast<string>(argc - 2));
             dbgPrintVector(vm["tag"].as<vector<string> >());
 #endif
+
+            if ((argc - 2) == 2)
+                cHandler.parseInput(vm["tag"].as<vector<string> >());
+            else
+                cout << "Not the right number of arguments." << std::endl;
+
         }
 
         // Manage "removetag" flag
         if (vm.count("removetag"))
         {
-            // TODO: implement remove tag, manage minimum number of flags
-
 #ifdef DEBUG
             dbgPrint(
                     "--removetag | nr of args: "
                             + boost::lexical_cast<string>(argc - 2));
             dbgPrintVector(vm["removetag"].as<vector<string> >());
 #endif
+
+            // TODO: implement remove tag, manage minimum number of flags
         }
 
         // Manage "showtag" flag
         if (vm.count("showtag"))
         {
-            // TODO: implement show tag, handle "all" option and the rest
-
 #ifdef DEBUG
             dbgPrint(
                     "--showtag | nr of args: "
                             + boost::lexical_cast<string>(argc - 2));
-            dbgPrint(vm["showtag"].as<string>());
+            dbgPrintVector(vm["showtag"].as<vector<string> >());
 #endif
+
+            // TODO: implement show tag, handle "all" option and the rest
         }
 
         // Manage "version" flag

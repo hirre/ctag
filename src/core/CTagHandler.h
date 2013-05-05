@@ -26,7 +26,10 @@
 #ifndef CTAGHANDLER_H_
 #define CTAGHANDLER_H_
 
-namespace CTag
+#include <iostream>
+#include <vector>
+
+namespace ctag
 {
 
 class CTagHandler
@@ -34,7 +37,10 @@ class CTagHandler
 public:
     CTagHandler();
     virtual ~CTagHandler();
+
+    // Method to parse cmd line input
+    void parseInput(const std::vector<std::string>& argVec);
 };
 
-} /* namespace CTag */
+} /* namespace ctag */
 #endif /* CTAGHANDLER_H_ */
