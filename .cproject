@@ -28,7 +28,7 @@
 								<option id="macosx.cpp.link.option.paths.2025346319" name="Library search path (-L)" superClass="macosx.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="/usr/local/lib/boost_1_53_0/stage/lib"/>
 								</option>
-								<option id="macosx.cpp.link.option.userobjs.1799980038" superClass="macosx.cpp.link.option.userobjs" valueType="userObjs">
+								<option id="macosx.cpp.link.option.userobjs.1799980038" name="Other objects" superClass="macosx.cpp.link.option.userobjs" valueType="userObjs">
 									<listOptionValue builtIn="false" value="/Users/hirre/dev/CTag/lib/sqlite3.o"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.macosx.cpp.linker.input.651982322" superClass="cdt.managedbuild.tool.macosx.cpp.linker.input">
@@ -43,7 +43,7 @@
 							<tool command="/opt/local/bin/g++" id="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base.379031825" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base">
 								<option id="gnu.cpp.compiler.option.include.paths.1269668255" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/usr/local/lib/boost_1_53_0/"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CTag/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ctag/include}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1720958876" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="DEBUG"/>
