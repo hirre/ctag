@@ -28,6 +28,9 @@
 								<option id="macosx.cpp.link.option.paths.2025346319" name="Library search path (-L)" superClass="macosx.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="/usr/local/lib/boost_1_53_0/stage/lib"/>
 								</option>
+								<option id="macosx.cpp.link.option.userobjs.1799980038" superClass="macosx.cpp.link.option.userobjs" valueType="userObjs">
+									<listOptionValue builtIn="false" value="/Users/hirre/dev/CTag/lib/sqlite3.o"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.macosx.cpp.linker.input.651982322" superClass="cdt.managedbuild.tool.macosx.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
