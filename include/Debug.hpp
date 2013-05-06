@@ -25,16 +25,19 @@
 
 #ifndef DEBUG_HPP_
 #define DEBUG_HPP_
+
 #ifdef DEBUG
+namespace debug
+{
 
 // Simple print function for debug messages
-void dbgPrint(const std::string str)
+inline static void dbgPrint(const std::string str)
 {
     std::cout << "[DEBUG] " << str << std::endl;
 }
 
 // Function that prints the content of a string vector array
-void dbgPrintVector(const std::vector<std::string>& vec)
+inline static void dbgPrintVector(const std::vector<std::string>& vec)
 {
     for (const std::string& v : vec)
     {
@@ -42,5 +45,7 @@ void dbgPrintVector(const std::vector<std::string>& vec)
     }
 }
 
+}
 #endif
+
 #endif /* DEBUG_HPP_ */

@@ -24,6 +24,7 @@
  */
 
 #include "CTagHandler.h"
+#include "Debug.hpp"
 
 namespace ctag
 {
@@ -37,11 +38,35 @@ CTagHandler::~CTagHandler()
 }
 
 /*
- * Method to parse the input from the command line.
+ * Method to process input from the command line.
  */
-void CTagHandler::parseInput(const std::vector<std::string>& argVec)
+void CTagHandler::processInput(const std::vector<std::string>& argVec,
+        const std::string& flag)
 {
+    if (flag.compare("tag") == 0)
+    {
+#ifdef DEBUG
+        debug::dbgPrint("PROCESSING: tag");
+#endif
 
+        // TODO: implement tag
+    }
+    else if (flag.compare("removetag") == 0)
+    {
+#ifdef DEBUG
+        debug::dbgPrint("PROCESSING: removetag");
+#endif
+
+        // TODO: implement removetag
+    }
+    else if (flag.compare("showtag") == 0)
+    {
+#ifdef DEBUG
+        debug::dbgPrint("PROCESSING: showtag");
+#endif
+
+        // TODO: implement showtag
+    }
 }
 
 } /* namespace ctag */

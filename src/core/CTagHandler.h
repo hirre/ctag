@@ -38,8 +38,9 @@ public:
     CTagHandler();
     virtual ~CTagHandler();
 
-    // Method to parse cmd line input
-    void parseInput(const std::vector<std::string>& argVec);
+    // Method to process cmd line input
+    void processInput(const std::vector<std::string>& argVec,
+            const std::string& flag);
 };
 
 } /* namespace ctag */

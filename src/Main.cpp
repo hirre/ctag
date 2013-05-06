@@ -25,9 +25,9 @@
 
 #define VERSION "0.1"
 
-#include <iostream>
 #include <boost/program_options.hpp>
 #include <boost/lexical_cast.hpp>
+#include <iostream>
 #include "Debug.hpp"
 #include "core/CTagHandler.h"
 
@@ -52,7 +52,9 @@ int main(int argc, char** argv)
                 "removetag,r", bpo::value<vector<string> >()->multitoken(),
                 "arg= <tag-string> <file_1 ... file_n>, e.g. \"-r helo /test/file7.txt\", or "
                         "\"-r helo /test/*.txt\" for all txt files in a specific folder, or "
-                        "\"-r helo /test/\" to remove tag for a specific folder")(
+                        "\"-r helo /test/\" to remove tag for a specific folder, "
+                        "use * instead of tag name to remove all tags in a folder and/or "
+                        "* instead of folder location to indicate the whole system")(
                 "showtag,s", bpo::value<vector<string> >()->multitoken(),
                 "arg= <tag> <folder location> to show files in a specific folder with a specific tag "
                         "(incl. folder itself, if it's tagged), "
@@ -85,43 +87,50 @@ int main(int argc, char** argv)
         if (vm.count("tag"))
         {
 #ifdef DEBUG
-            dbgPrint(
+            debug::dbgPrint(
                     "--tag | nr of args: "
                             + boost::lexical_cast<string>(argc - 2));
-            dbgPrintVector(vm["tag"].as<vector<string> >());
+            debug::dbgPrintVector(vm["tag"].as<vector<string> >());
 #endif
-
             if ((argc - 2) == 2)
-                cHandler.parseInput(vm["tag"].as<vector<string> >());
+                cHandler.processInput(vm["tag"].as<vector<string> >(), "tag");
             else
-                cout << "Not the right number of arguments." << std::endl;
-
+                cout << "Not the right number of arguments for tag flag."
+                        << std::endl;
         }
 
         // Manage "removetag" flag
         if (vm.count("removetag"))
         {
 #ifdef DEBUG
-            dbgPrint(
+            debug::dbgPrint(
                     "--removetag | nr of args: "
                             + boost::lexical_cast<string>(argc - 2));
-            dbgPrintVector(vm["removetag"].as<vector<string> >());
+            debug::dbgPrintVector(vm["removetag"].as<vector<string> >());
 #endif
-
-            // TODO: implement remove tag, manage minimum number of flags
+            if ((argc - 2) == 2)
+                cHandler.processInput(vm["removetag"].as<vector<string> >(),
+                        "removetag");
+            else
+                cout << "Not the right number of arguments for removetag flag."
+                        << std::endl;
         }
 
         // Manage "showtag" flag
         if (vm.count("showtag"))
         {
 #ifdef DEBUG
-            dbgPrint(
+            debug::dbgPrint(
                     "--showtag | nr of args: "
                             + boost::lexical_cast<string>(argc - 2));
-            dbgPrintVector(vm["showtag"].as<vector<string> >());
+            debug::dbgPrintVector(vm["showtag"].as<vector<string> >());
 #endif
-
-            // TODO: implement show tag, handle "all" option and the rest
+            if ((argc - 2) == 2)
+                cHandler.processInput(vm["showtag"].as<vector<string> >(),
+                        "showtag");
+            else
+                cout << "Not the right number of arguments for showtag flag."
+                        << std::endl;
         }
 
         // Manage "version" flag
