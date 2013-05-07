@@ -23,6 +23,8 @@
 							<tool command="/opt/local/bin/g++" id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.base.722965086" name="MacOS X C++ Linker" superClass="cdt.managedbuild.tool.macosx.cpp.linker.macosx.base">
 								<option id="macosx.cpp.link.option.libs.900626652" name="Libraries (-l)" superClass="macosx.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="boost_program_options"/>
+									<listOptionValue builtIn="false" value="boost_system"/>
+									<listOptionValue builtIn="false" value="boost_filesystem"/>
 								</option>
 								<option id="macosx.cpp.link.option.flags.1258041324" name="Linker flags" superClass="macosx.cpp.link.option.flags" value="-Bstatic" valueType="string"/>
 								<option id="macosx.cpp.link.option.paths.2025346319" name="Library search path (-L)" superClass="macosx.cpp.link.option.paths" valueType="libPaths">
@@ -92,6 +94,8 @@
 									<listOptionValue builtIn="false" value="&quot;C:\lib\boost\boost_1_53_0\stage\lib&quot;"/>
 								</option>
 								<option id="macosx.cpp.link.option.libs.1416834164" name="Libraries (-l)" superClass="macosx.cpp.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" value="boost_filesystem-mgw47-mt-1_53"/>
+									<listOptionValue builtIn="false" value="boost_system-mgw47-mt-1_53"/>
 									<listOptionValue builtIn="false" value="boost_program_options-mgw47-mt-1_53"/>
 								</option>
 								<option id="macosx.cpp.link.option.other.1197065260" name="Other options (-Xlinker [option])" superClass="macosx.cpp.link.option.other"/>

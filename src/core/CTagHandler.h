@@ -28,6 +28,7 @@
 
 #include <iostream>
 #include <vector>
+#include "sqlite3.h"
 
 namespace ctag
 {
@@ -41,6 +42,9 @@ public:
     // Method to process cmd line input
     void processInput(const std::vector<std::string>& argVec,
             const std::string& flag);
+private:
+    // Initialize database
+    bool initDB(sqlite3* db);
 };
 
 } /* namespace ctag */
