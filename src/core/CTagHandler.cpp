@@ -24,6 +24,7 @@
  */
 
 #include <stdlib.h>
+#include <sstream>
 #include <boost/filesystem.hpp>
 #include "CTagHandler.h"
 #include "Debug.hpp"
@@ -34,16 +35,34 @@ namespace ctag
 
 CTagHandler::CTagHandler()
 {
+    database = NULL;
+
+    // Home folder path + database
+    std::stringstream ss;
+    ss << getHomeFolder()
+            << boost::filesystem::path("/").make_preferred().native()
+            << ".ctag";
+    path = new std::string(ss.str());
+
+#ifdef DEBUG
+    debug::dbgPrint("Home folder: " + *path);
+#endif
 }
 
 CTagHandler::~CTagHandler()
 {
+    // Close if not closed
+    if (database)
+        sqlite3_close(database);
+
+    // Delete path
+    delete path;
 }
 
 /*
  * Initialize the database.
  */
-bool CTagHandler::initDB(sqlite3* db)
+bool CTagHandler::initDB()
 {
     const char* createTableSQL = "CREATE TABLE IF NOT EXISTS "
             "tag(id INTEGER PRIMARY KEY, tagname TEXT, "
@@ -55,7 +74,8 @@ bool CTagHandler::initDB(sqlite3* db)
     sqlite3_stmt* statement;
 
     // Create table if not exists
-    if (sqlite3_prepare_v2(db, createTableSQL, -1, &statement, 0) != SQLITE_OK)
+    if (sqlite3_prepare_v2(database, createTableSQL, -1, &statement,
+            0) != SQLITE_OK)
         return false;
 
     // Execute
@@ -63,7 +83,8 @@ bool CTagHandler::initDB(sqlite3* db)
     sqlite3_finalize(statement);
 
     // Create index if not exists
-    if (sqlite3_prepare_v2(db, createIndexSQL, -1, &statement, 0) != SQLITE_OK)
+    if (sqlite3_prepare_v2(database, createIndexSQL, -1, &statement,
+            0) != SQLITE_OK)
         return false;
 
     // Execute
@@ -74,33 +95,62 @@ bool CTagHandler::initDB(sqlite3* db)
 }
 
 /*
+ * Tag method for tagging files/folders.
+ */
+bool CTagHandler::tag(const std::string& tagName, const std::string& f)
+{
+    // Path which is to be tagged
+    boost::filesystem::path p(f);
+
+    // Check if path exists
+    if (boost::filesystem::is_directory(p) || boost::filesystem::exists(p))
+    {
+        // TODO: check if path contains *
+
+        sqlite3_stmt* statement;
+
+        std::stringstream ss;
+        ss << "INSERT INTO (tagname, path) VALUES('" << tagName << "', '" << f << "');";
+
+        // Insert statement
+        if (sqlite3_prepare_v2(database, ss.str().c_str(), -1, &statement,
+                0) != SQLITE_OK)
+        {
+            std::cout << "Could not prepare statement!" << std::endl;
+            return false;
+        }
+
+        // Execute
+        sqlite3_step(statement);
+        sqlite3_finalize(statement);
+    }
+    else
+    {
+        std::cout << "Path does not exist!" << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+/*
  * Method to process input from the command line.
  */
 void CTagHandler::processInput(const std::vector<std::string>& argVec,
         const std::string& flag)
 {
-    // Open db connection
-    sqlite3* database;
-
-    // Home folder path + database
-    const char* path = (std::string(getHomeFolder())
-            + boost::filesystem::path("/").make_preferred().native() + ".ctag").c_str();
-
-#ifdef DEBUG
-printf("CTAG DB LOCATION: %s\n", path);
-#endif
-
     // Check if database can be opened
-    if (sqlite3_open(path, &database) != SQLITE_OK)
+    if (sqlite3_open(path->c_str(), &database) != SQLITE_OK)
     {
-        std::cout << "Could not connect to DB" << std::endl;
+        std::cout << "Could not connect or create DB in home folder!"
+                << std::endl;
         return;
     }
 
     // Init db
-    if (!initDB(database))
+    if (!initDB())
     {
-        std::cout << "Could not initialize DB" << std::endl;
+        std::cout << "Could not initialize DB!" << std::endl;
         return;
     }
 
@@ -109,8 +159,9 @@ printf("CTAG DB LOCATION: %s\n", path);
 #ifdef DEBUG
         debug::dbgPrint("PROCESSING: tag");
 #endif
-
-        // TODO: implement tag
+        // Tag
+        if (tag(argVec[0], argVec[1]))
+            std::cout << "Created tag!" << std::endl;
     }
     else if (flag.compare("removetag") == 0)
     {

@@ -53,14 +53,14 @@ int main(int argc, char** argv)
                 "arg= <tag-string> <file_1 ... file_n>, e.g. \"-r helo /test/file7.txt\", or "
                         "\"-r helo /test/*.txt\" for all txt files in a specific folder, or "
                         "\"-r helo /test/\" to remove tag for a specific folder, "
-                        "use * instead of tag name to remove all tags in a folder and/or "
-                        "* instead of folder location to indicate the whole system")(
+                        "use \"*\" (with quotes) instead of tag name to remove all tags in a folder and/or "
+                        "\"*\" (with quotes) instead of folder location to indicate the whole system")(
                 "showtag,s", bpo::value<vector<string> >()->multitoken(),
                 "arg= <tag> <folder location> to show files in a specific folder with a specific tag "
                         "(incl. folder itself, if it's tagged), "
                         "e.g. \"-f testtag /usr/lib/\" shows all files in \"/usr/lib/\" tagged with \"testtag\", "
-                        "use * instead of tag name to show all tags in a folder and/or "
-                        "* instead of folder location to search the whole system")(
+                        "use \"*\" (with quotes) instead of tag name to show all tags in a folder and/or "
+                        "\"*\" (with quotes) instead of folder location to search the whole system")(
                 "version,v", "version number");
 
         // Map for storing input

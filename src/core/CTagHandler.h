@@ -43,8 +43,14 @@ public:
     void processInput(const std::vector<std::string>& argVec,
             const std::string& flag);
 private:
+    // Database
+    sqlite3* database;
+    // Path to database
+    std::string * path;
     // Initialize database
-    bool initDB(sqlite3* db);
+    bool initDB();
+    // Tag method
+    bool tag(const std::string& tagName, const std::string& f);
 };
 
 } /* namespace ctag */
