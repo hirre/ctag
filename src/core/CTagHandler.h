@@ -36,9 +36,10 @@ namespace ctag
 class CTagHandler
 {
 public:
+    // Constructor
     CTagHandler();
+    // Destructor
     virtual ~CTagHandler();
-
     // Method to process cmd line input
     void processInput(const std::vector<std::string>& argVec,
             const std::string& flag);
@@ -50,7 +51,11 @@ private:
     // Initialize database
     bool initDB();
     // Tag method
-    bool tag(const std::string& tagName, const std::string& f);
+    bool tag(const std::vector<std::string>& fVec);
+    // Show tag method
+    bool showTag(const std::vector<std::string>& fVec);
+    // Remove tag method
+    bool removeTag(const std::vector<std::string>& fVec);
 };
 
 } /* namespace ctag */

@@ -53,14 +53,12 @@ int main(int argc, char** argv)
                 "arg= <tag-string> <file_1 ... file_n>, e.g. \"-r helo /test/file7.txt\", or "
                         "\"-r helo /test/*.txt\" for all txt files in a specific folder, or "
                         "\"-r helo /test/\" to remove tag for a specific folder, "
-                        "use \"*\" (with quotes) instead of tag name to remove all tags in a folder and/or "
-                        "\"*\" (with quotes) instead of folder location to indicate the whole system")(
+                        "use \"*\" (with quotes) instead of tag name to remove all tags in a folder and/or ")(
                 "showtag,s", bpo::value<vector<string> >()->multitoken(),
                 "arg= <tag> <folder location> to show files in a specific folder with a specific tag "
                         "(incl. folder itself, if it's tagged), "
                         "e.g. \"-f testtag /usr/lib/\" shows all files in \"/usr/lib/\" tagged with \"testtag\", "
-                        "use \"*\" (with quotes) instead of tag name to show all tags in a folder and/or "
-                        "\"*\" (with quotes) instead of folder location to search the whole system")(
+                        "use \"*\" (with quotes) instead of tag name to show all tags in a folder")(
                 "version,v", "version number");
 
         // Map for storing input
@@ -92,7 +90,7 @@ int main(int argc, char** argv)
                             + boost::lexical_cast<string>(argc - 2));
             debug::dbgPrintVector(vm["tag"].as<vector<string> >());
 #endif
-            if ((argc - 2) == 2)
+            if ((argc - 2) >= 2)
                 cHandler.processInput(vm["tag"].as<vector<string> >(), "tag");
             else
                 cout << "Not the right number of arguments for tag flag."
@@ -108,7 +106,7 @@ int main(int argc, char** argv)
                             + boost::lexical_cast<string>(argc - 2));
             debug::dbgPrintVector(vm["removetag"].as<vector<string> >());
 #endif
-            if ((argc - 2) == 2)
+            if ((argc - 2) >= 2)
                 cHandler.processInput(vm["removetag"].as<vector<string> >(),
                         "removetag");
             else
@@ -125,7 +123,7 @@ int main(int argc, char** argv)
                             + boost::lexical_cast<string>(argc - 2));
             debug::dbgPrintVector(vm["showtag"].as<vector<string> >());
 #endif
-            if ((argc - 2) == 2)
+            if ((argc - 2) >= 2)
                 cHandler.processInput(vm["showtag"].as<vector<string> >(),
                         "showtag");
             else

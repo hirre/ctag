@@ -33,8 +33,12 @@
 namespace ctag
 {
 
+/*
+ * Main constructor.
+ */
 CTagHandler::CTagHandler()
 {
+    // Init db to null
     database = NULL;
 
     // Home folder path + database
@@ -45,10 +49,13 @@ CTagHandler::CTagHandler()
     path = new std::string(ss.str());
 
 #ifdef DEBUG
-    debug::dbgPrint("Home folder: " + *path);
+    debug::dbgPrint("Database: " + *path);
 #endif
 }
 
+/*
+ * Destructor.
+ */
 CTagHandler::~CTagHandler()
 {
     // Close if not closed
@@ -66,7 +73,7 @@ bool CTagHandler::initDB()
 {
     const char* createTableSQL = "CREATE TABLE IF NOT EXISTS "
             "tag(id INTEGER PRIMARY KEY, tagname TEXT, "
-            "path TEXT, UNIQUE(tagname, path));";
+            "path TEXT, dt TEXT, UNIQUE(tagname, path));";
 
     const char* createIndexSQL =
             "CREATE INDEX IF NOT EXISTS tag_idx ON tag (tagname, path);";
@@ -97,38 +104,157 @@ bool CTagHandler::initDB()
 /*
  * Tag method for tagging files/folders.
  */
-bool CTagHandler::tag(const std::string& tagName, const std::string& f)
+bool CTagHandler::tag(const std::vector<std::string>& fVec)
 {
-    // Path which is to be tagged
-    boost::filesystem::path p(f);
+    // Tag name
+    std::string tagName = fVec[0];
 
-    // Check if path exists
-    if (boost::filesystem::is_directory(p) || boost::filesystem::exists(p))
+    // Go through path(s)
+    for (unsigned int i = 1; i < fVec.size(); i++)
     {
-        // TODO: check if path contains *
+        // File/folder string
+        std::string f = fVec[i];
 
-        sqlite3_stmt* statement;
+        // Path which is to be tagged
+        boost::filesystem::path p(f);
 
-        std::stringstream ss;
-        ss << "INSERT INTO (tagname, path) VALUES('" << tagName << "', '" << f << "');";
-
-        // Insert statement
-        if (sqlite3_prepare_v2(database, ss.str().c_str(), -1, &statement,
-                0) != SQLITE_OK)
+        // Check if path exists
+        if (boost::filesystem::is_directory(p) || boost::filesystem::exists(p))
         {
-            std::cout << "Could not prepare statement!" << std::endl;
+            sqlite3_stmt* statement;
+
+            std::stringstream ss;
+            ss << "INSERT INTO tag (tagname, path, dt) VALUES('" << tagName
+                    << "', '" << boost::filesystem::canonical(p).string()
+                    << "', datetime('now'));";
+
+            // Insert statement
+            if (sqlite3_prepare_v2(database, ss.str().c_str(), -1, &statement,
+                    0) != SQLITE_OK)
+            {
+                std::cerr << "Could not prepare statement [" << ss.str() << "]!"
+                        << std::endl;
+                return false;
+            }
+
+            // Execute
+            sqlite3_step(statement);
+            sqlite3_finalize(statement);
+        }
+        else
+        {
+            std::cerr << "Path (" << p.string() << ") does not exist!"
+                    << std::endl;
             return false;
         }
+    }
 
-        // Execute
-        sqlite3_step(statement);
-        sqlite3_finalize(statement);
-    }
-    else
+    return true;
+}
+
+/*
+ * Method to remove tag(s)
+ */
+bool CTagHandler::removeTag(const std::vector<std::string>& fVec)
+{
+    // TODO: implement removetag
+
+    return true;
+}
+
+/*
+ * Method to show tag(s).
+ */
+bool CTagHandler::showTag(const std::vector<std::string>& fVec)
+{
+    // Tag name
+    std::string tagName = fVec[0];
+    bool foundTag = false;
+
+    // Go through path(s)
+    for (unsigned int i = 1; i < fVec.size(); i++)
     {
-        std::cout << "Path does not exist!" << std::endl;
-        return false;
+        // File/folder string
+        std::string f = fVec[i];
+
+        // Path which is to be tagged
+        boost::filesystem::path p(f);
+
+        // Check if path exists
+        if (boost::filesystem::is_directory(p) || boost::filesystem::exists(p))
+        {
+            sqlite3_stmt* statement;
+            std::stringstream ss;
+
+            // Select all
+            if (tagName.compare("*") == 0)
+                ss << "SELECT * FROM tag WHERE path = '"
+                        << boost::filesystem::canonical(p).string() << "'";
+            else
+                // Select specific tag
+                ss << "SELECT * FROM tag WHERE tagname = '" << tagName
+                        << "' AND path = '"
+                        << boost::filesystem::canonical(p).string() << "'";
+
+            // Select statement
+            if (sqlite3_prepare_v2(database, ss.str().c_str(), -1, &statement,
+                    0) != SQLITE_OK)
+            {
+                std::cerr << "Could not prepare statement [" << ss.str() << "]!"
+                        << std::endl;
+                return false;
+            }
+            else // OK Select
+            {
+                int result = 0;
+
+                while (true)
+                {
+                    // Execute
+                    result = sqlite3_step(statement);
+
+                    // Found row
+                    if (result == SQLITE_ROW)
+                    {
+                        foundTag = true;
+
+                        // Tag name
+                        std::string tag = (char*) sqlite3_column_text(statement,
+                                1);
+
+                        // Path
+                        std::string pathStr = (char*) sqlite3_column_text(
+                                statement, 2);
+
+                        // Datetime
+                        std::string dt = (char*) sqlite3_column_text(statement,
+                                3);
+
+                        // Print found tag
+                        std::cout << "#" << tag << "\t" << pathStr << "\t["
+                                << dt << "]" << std::endl;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                // Finalize
+                sqlite3_finalize(statement);
+            }
+        }
+        else
+        {
+            std::cerr << "Path (" << p.string() << ") does not exist!"
+                    << std::endl;
+            return false;
+        }
     }
+
+    // Tag has not been found
+    if (!foundTag)
+        return false;
 
     return true;
 }
@@ -142,7 +268,7 @@ void CTagHandler::processInput(const std::vector<std::string>& argVec,
     // Check if database can be opened
     if (sqlite3_open(path->c_str(), &database) != SQLITE_OK)
     {
-        std::cout << "Could not connect or create DB in home folder!"
+        std::cerr << "Could not connect or create DB in home folder!"
                 << std::endl;
         return;
     }
@@ -150,7 +276,7 @@ void CTagHandler::processInput(const std::vector<std::string>& argVec,
     // Init db
     if (!initDB())
     {
-        std::cout << "Could not initialize DB!" << std::endl;
+        std::cerr << "Could not initialize DB!" << std::endl;
         return;
     }
 
@@ -160,16 +286,16 @@ void CTagHandler::processInput(const std::vector<std::string>& argVec,
         debug::dbgPrint("PROCESSING: tag");
 #endif
         // Tag
-        if (tag(argVec[0], argVec[1]))
-            std::cout << "Created tag!" << std::endl;
+        if (tag(argVec))
+            std::cout << "Tagged!" << std::endl;
     }
     else if (flag.compare("removetag") == 0)
     {
 #ifdef DEBUG
         debug::dbgPrint("PROCESSING: removetag");
 #endif
-
-        // TODO: implement removetag
+        if (removeTag(argVec))
+            std::cout << "Removed tag(s)." << std::endl;
     }
     else if (flag.compare("showtag") == 0)
     {
@@ -177,7 +303,9 @@ void CTagHandler::processInput(const std::vector<std::string>& argVec,
         debug::dbgPrint("PROCESSING: showtag");
 #endif
 
-        // TODO: implement showtag
+        // Show tag
+        if (!showTag(argVec))
+            std::cerr << "Tag(s) not found." << std::endl;
     }
 
     // Close db
