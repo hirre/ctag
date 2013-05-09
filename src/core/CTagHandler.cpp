@@ -87,6 +87,8 @@ bool CTagHandler::initDB()
 
     // Execute
     sqlite3_step(statement);
+
+    // Finalize
     sqlite3_finalize(statement);
 
     // Create index if not exists
@@ -96,13 +98,15 @@ bool CTagHandler::initDB()
 
     // Execute
     sqlite3_step(statement);
+
+    // Finalize
     sqlite3_finalize(statement);
 
     return true;
 }
 
 /*
- * Tag method for tagging files/folders.
+ * Method for tagging files/folders.
  */
 bool CTagHandler::tag(const std::vector<std::string>& fVec)
 {
@@ -139,6 +143,8 @@ bool CTagHandler::tag(const std::vector<std::string>& fVec)
 
             // Execute
             sqlite3_step(statement);
+
+            // Finalize
             sqlite3_finalize(statement);
         }
         else

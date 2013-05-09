@@ -93,7 +93,7 @@ int main(int argc, char** argv)
             if ((argc - 2) >= 2)
                 cHandler.processInput(vm["tag"].as<vector<string> >(), "tag");
             else
-                cout << "Not the right number of arguments for tag flag."
+                cerr << "Not the right number of arguments for tag flag."
                         << std::endl;
         }
 
@@ -110,7 +110,7 @@ int main(int argc, char** argv)
                 cHandler.processInput(vm["removetag"].as<vector<string> >(),
                         "removetag");
             else
-                cout << "Not the right number of arguments for removetag flag."
+                cerr << "Not the right number of arguments for removetag flag."
                         << std::endl;
         }
 
@@ -127,7 +127,7 @@ int main(int argc, char** argv)
                 cHandler.processInput(vm["showtag"].as<vector<string> >(),
                         "showtag");
             else
-                cout << "Not the right number of arguments for showtag flag."
+                cerr << "Not the right number of arguments for showtag flag."
                         << std::endl;
         }
 
