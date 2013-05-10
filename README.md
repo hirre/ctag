@@ -19,9 +19,9 @@ ctag [flag] [arguments]
 ### COMPILATION
 Example: Windows 7, MinGW & g++ >=4.7
 
-g++ "-IC:\\lib\\boost\\boost_1_53_0" "-IC:\\Users\\me\\dev\\ctag\\include" -O3 -c -fmessage-length=0 -std=c++11 -o "src\\Main.o" "..\\src\\Main.cpp"
+	g++ "-IC:\\lib\\boost\\boost_1_53_0" "-IC:\\Users\\me\\dev\\ctag\\include" -O3 -c -fmessage-length=0 -std=c++11 -o "src\\Main.o" "..\\src\\Main.cpp"
  
-g++ "-LC:\\lib\\boost\\boost_1_53_0\\stage\\lib" -Bstatic -o ctag "src\\core\\CTagHandler.o" "src\\Main.o" "..\\lib\\sqlite3.o" -lboost_filesystem-mgw47-mt-1_53 -lboost_system-mgw47-mt-1_53 -lboost_program_options-mgw47-mt-1_53
+	g++ "-LC:\\lib\\boost\\boost_1_53_0\\stage\\lib" -Bstatic -o ctag "src\\core\\CTagHandler.o" "src\\Main.o" "..\\lib\\sqlite3.o" -lboost_filesystem-mgw47-mt-1_53 -lboost_system-mgw47-mt-1_53 -lboost_program_options-mgw47-mt-1_53
 
 (Linker uses specific static boost libraries and sqlite3.o)
 
