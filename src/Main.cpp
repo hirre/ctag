@@ -42,6 +42,7 @@ int main(int argc, char** argv)
     try
     {
         // TODO: room for improved command descriptions
+        // TODO: test different inputs
         // Create options
         bpo::options_description opts("Usage");
         opts.add_options()("help,h", "help message")("tag,t",
@@ -53,12 +54,12 @@ int main(int argc, char** argv)
                 "arg= <tag-string> <file_1 ... file_n>, e.g. \"-r helo /test/file7.txt\", or "
                         "\"-r helo /test/*.txt\" for all txt files in a specific folder, or "
                         "\"-r helo /test/\" to remove tag for a specific folder, "
-                        "use \"*\" (with quotes) instead of tag name to remove all tags in a folder and/or ")(
+                        "use \"#\" (without quotes) instead of tag name to remove all tags in a folder")(
                 "showtag,s", bpo::value<vector<string> >()->multitoken(),
                 "arg= <tag> <folder location> to show files in a specific folder with a specific tag "
                         "(incl. folder itself, if it's tagged), "
                         "e.g. \"-f testtag /usr/lib/\" shows all files in \"/usr/lib/\" tagged with \"testtag\", "
-                        "use \"*\" (with quotes) instead of tag name to show all tags in a folder")(
+                        "use \"#\" (without quotes) instead of tag name to show all tags in a folder")(
                 "version,v", "version number");
 
         // Map for storing input

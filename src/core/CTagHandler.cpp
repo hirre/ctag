@@ -2,6 +2,10 @@
  *  CTagHandler.cpp
  *
  *  Handler class that handles input from the command line.
+ *  Handles:
+ *      -tag
+ *      -removetag
+ *      -showtag
  *
  *  Created on: 5 maj 2013
  *  Author: Hirad Asadi
@@ -151,7 +155,7 @@ bool CTagHandler::tag(const std::vector<std::string>& fVec)
                     << std::endl;
             return false;
         }
-    }
+    } // FOR
 
     return true;
 }
@@ -161,9 +165,67 @@ bool CTagHandler::tag(const std::vector<std::string>& fVec)
  */
 bool CTagHandler::removeTag(const std::vector<std::string>& fVec)
 {
-    // TODO: implement removetag
+    // Tag name
+    std::string tagName = fVec[0];
 
-    return true;
+    // Removed rows
+    bool removedRows = false;
+
+    // Go through path(s)
+    for (unsigned int i = 1; i < fVec.size(); i++)
+    {
+        // File/folder string
+        std::string f = fVec[i];
+
+        // Path which is to be tagged
+        boost::filesystem::path p(f);
+
+        // Check if path exists
+        if (boost::filesystem::is_directory(p) || boost::filesystem::exists(p))
+        {
+            sqlite3_stmt* statement;
+
+            std::stringstream ss;
+
+            // Delete all tags
+            if (tagName.compare("#") == 0)
+                ss << "DELETE FROM tag WHERE path = '"
+                        << boost::filesystem::canonical(p).string() << "';";
+            else
+                // Delete specific tags from file(s)/folder(s)
+                ss << "DELETE FROM tag WHERE tagname = '" << tagName
+                        << "' AND path = '"
+                        << boost::filesystem::canonical(p).string() << "';";
+
+            // Delete statement
+            if (sqlite3_prepare_v2(database, ss.str().c_str(), -1, &statement,
+                    0) != SQLITE_OK)
+            {
+                std::cerr << "Could not prepare statement [" << ss.str() << "]!"
+                        << std::endl;
+                return false;
+            }
+            else
+            {
+                // Execute
+                sqlite3_step(statement);
+
+                if (sqlite3_changes(database) != 0)
+                    removedRows = true;
+
+                // Finalize
+                sqlite3_finalize(statement);
+            }
+        }
+        else
+        {
+            std::cerr << "Path (" << p.string() << ") does not exist!"
+                    << std::endl;
+            return false;
+        }
+    } // FOR
+
+    return (removedRows) ? true : false;
 }
 
 /*
@@ -181,7 +243,7 @@ bool CTagHandler::showTag(const std::vector<std::string>& fVec)
         // File/folder string
         std::string f = fVec[i];
 
-        // Path which is to be tagged
+        // Path which is to be shown
         boost::filesystem::path p(f);
 
         // Check if path exists
@@ -191,14 +253,16 @@ bool CTagHandler::showTag(const std::vector<std::string>& fVec)
             std::stringstream ss;
 
             // Select all
-            if (tagName.compare("*") == 0)
+            if (tagName.compare("#") == 0)
                 ss << "SELECT * FROM tag WHERE path = '"
-                        << boost::filesystem::canonical(p).string() << "'";
+                        << boost::filesystem::canonical(p).string()
+                        << "' ORDER BY dt DESC";
             else
                 // Select specific tag
                 ss << "SELECT * FROM tag WHERE tagname = '" << tagName
                         << "' AND path = '"
-                        << boost::filesystem::canonical(p).string() << "'";
+                        << boost::filesystem::canonical(p).string()
+                        << "' ORDER BY dt DESC";
 
             // Select statement
             if (sqlite3_prepare_v2(database, ss.str().c_str(), -1, &statement,
@@ -254,13 +318,9 @@ bool CTagHandler::showTag(const std::vector<std::string>& fVec)
                     << std::endl;
             return false;
         }
-    }
+    } // FOR
 
-    // Tag has not been found
-    if (!foundTag)
-        return false;
-
-    return true;
+    return (!foundTag) ? false : true;
 }
 
 /*
@@ -300,6 +360,8 @@ void CTagHandler::processInput(const std::vector<std::string>& argVec,
 #endif
         if (removeTag(argVec))
             std::cout << "Removed tag(s)." << std::endl;
+        else
+            std::cout << "No row(s) removed." << std::endl;
     }
     else if (flag.compare("showtag") == 0)
     {

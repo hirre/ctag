@@ -2,6 +2,10 @@
  *  CTagHandler.h
  *
  *  Handler class that handles input from the command line.
+ *  Handles:
+ *      -tag
+ *      -removetag
+ *      -showtag
  *
  *  Created on: 5 maj 2013
  *  Author: Hirad Asadi
