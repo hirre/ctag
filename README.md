@@ -9,6 +9,7 @@ Command line program to tag files and folders in the OS. Tested on Windows 7 and
 
 ### USAGE 
 ctag [flag] [arguments]
+
 (Multiple flags can be used)
 
 ### DEPENDENCY
