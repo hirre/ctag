@@ -13,8 +13,8 @@ ctag [flag] [arguments]
 - Support for adding, deleting and showing tags.
 
 ### DEPENDENCY
-- Boost >=1.53
-- SQLite (Sqlite3.o) >=3.7.16.2 (download "amalgamation" from http://www.sqlite.org/download.html and compile your own .o-file with e.g. gcc)
+- Boost >=1.53.
+- SQLite (Sqlite3.o) >=3.7.16.2 (download "amalgamation" from http://www.sqlite.org/download.html and compile your own .o-file with e.g. gcc).
 
 ### COMPILATION
 Example: Windows 7, MinGW & g++ >=4.7
