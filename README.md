@@ -9,6 +9,7 @@ Command line program to tag files and folders in the OS. Tested on Windows 7 and
 
 ### USAGE 
 ctag [flag] [arguments]
+(Multiple flags can be used)
 
 ### DEPENDENCY
 - Boost >=1.53
@@ -22,4 +23,9 @@ g++ "-IC:\\lib\\boost\\boost_1_53_0" "-IC:\\Users\\me\\dev\\ctag\\include" -O3 -
 g++ "-LC:\\lib\\boost\\boost_1_53_0\\stage\\lib" -Bstatic -o ctag "src\\core\\CTagHandler.o" "src\\Main.o" "..\\lib\\sqlite3.o" -lboost_filesystem-mgw47-mt-1_53 -lboost_system-mgw47-mt-1_53 -lboost_program_options-mgw47-mt-1_53
 
 (Linker uses specific static boost libraries and sqlite3.o)
+
+If you use Windows, environmental variables $USERPROFILE or $HOMEDRIVE and $HOMEPATH must be set (usually they are). In OSX or Linux $HOME must be set (usually is).
  
+### TODO
+- Room for improved command descriptions in help.
+- Testing different inputs.
