@@ -30,3 +30,4 @@ If you use Windows, environmental variables $USERPROFILE or $HOMEDRIVE and $HOME
 ### TODO
 - Room for improved command descriptions in help.
 - Testing different inputs.
+- Testing on Linux.
