@@ -14,7 +14,7 @@ ctag [flag] [arguments]
 
 ### DEPENDENCY
 - Boost >=1.53.
-- SQLite (Sqlite3.o) >=3.7.16.2 (download ["Amalgamation](http://www.sqlite.org/download.html) and compile your own .o-file with e.g. gcc).
+- SQLite (Sqlite3.o) >=3.7.16.2 (download [Amalgamation](http://www.sqlite.org/download.html) and compile your own .o-file with e.g. gcc).
 
 ### COMPILATION
 Example: Windows 7, MinGW & g++ >=4.7
@@ -27,6 +27,9 @@ Example: Windows 7, MinGW & g++ >=4.7
 
 If you use Windows, environmental variables $USERPROFILE or $HOMEDRIVE and $HOMEPATH must be set (usually they are). In OSX or Linux $HOME must be set (usually is).
  
+### License
+[GNU General Public License v3](http://www.gnu.org/licenses/gpl.html)
+
 ### TODO
 - Room for improved command descriptions in help.
 - Testing different inputs.
