@@ -11,7 +11,7 @@ Command line program to tag files and folders in the OS. Tested on Windows 7 and
 ctag [flag] [arguments]
 
 ### DEPENDENCY
-- Boost >= v.1.53
+- Boost >=1.53
 - Sqlite3.o (download "amalgamation" from http://www.sqlite.org/download.html and compile your own .o-file with e.g. gcc)
 
 ### COMPILATION
