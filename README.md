@@ -27,7 +27,7 @@ Example: Windows 7, MinGW & g++ >=4.7
 
 If you use Windows, environmental variables $USERPROFILE or $HOMEDRIVE and $HOMEPATH must be set (usually they are). In OSX or Linux $HOME must be set (usually is).
  
-### License
+### LICENSE
 [GNU General Public License v3](http://www.gnu.org/licenses/gpl.html)
 
 ### TODO
