@@ -3,14 +3,14 @@ ctag
 
 Command line program to tag files and folders in the OS. Tested on Windows 7 and Mac OSX 10.8.3.
 
-### VERSION HISTORY 
-0.1:
-- Support for adding, deleting and showing tags.
-
 ### USAGE 
 ctag [flag] [arguments]
 
 (Multiple flags can be used)
+
+### VERSION HISTORY 
+0.1:
+- Support for adding, deleting and showing tags.
 
 ### DEPENDENCY
 - Boost >=1.53
