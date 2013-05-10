@@ -36,7 +36,7 @@ inline static void dbgPrint(const std::string str)
     std::cout << "[DEBUG] " << str << std::endl;
 }
 
-// Function that prints the content of a string vector array
+// Function that prints the contents of a string vector
 inline static void dbgPrintVector(const std::vector<std::string>& vec)
 {
     for (const std::string& v : vec)

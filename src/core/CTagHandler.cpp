@@ -43,9 +43,7 @@ CTagHandler::CTagHandler()
 
     // Home folder path + database
     std::stringstream ss;
-    ss << getHomeFolder()
-            << boost::filesystem::path("/").make_preferred().native()
-            << ".ctag";
+    ss << getHomeFolder() << PATH_SEPARATOR << ".ctag";
     path = new std::string(ss.str());
 
 #ifdef DEBUG
@@ -67,7 +65,7 @@ CTagHandler::~CTagHandler()
 }
 
 /*
- * Initialize the database.
+ * Initialize the database. Creates the needed tables if they do not exist.
  */
 bool CTagHandler::initDB()
 {
@@ -106,7 +104,7 @@ bool CTagHandler::initDB()
 }
 
 /*
- * Method for tagging files/folders.
+ * Method for tagging files/folders. Receives arguments as an input vector.
  */
 bool CTagHandler::tag(const std::vector<std::string>& fVec)
 {
@@ -159,7 +157,7 @@ bool CTagHandler::tag(const std::vector<std::string>& fVec)
 }
 
 /*
- * Method to remove tag(s)
+ * Method to remove tag(s). Receives arguments as an input vector.
  */
 bool CTagHandler::removeTag(const std::vector<std::string>& fVec)
 {
@@ -169,7 +167,7 @@ bool CTagHandler::removeTag(const std::vector<std::string>& fVec)
 }
 
 /*
- * Method to show tag(s).
+ * Method to show tag(s). Receives arguments as an input vector.
  */
 bool CTagHandler::showTag(const std::vector<std::string>& fVec)
 {

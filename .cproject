@@ -5,7 +5,7 @@
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933" moduleId="org.eclipse.cdt.core.settings" name="DebugMac">
 				<externalSettings/>
 				<extensions>
-					<extension id="org.eclipse.cdt.core.MachO64" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="org.eclipse.cdt.core.PE" point="org.eclipse.cdt.core.BinaryParser"/>
 					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
@@ -17,7 +17,7 @@
 				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933" name="DebugMac" parent="cdt.managedbuild.config.gnu.macosx.exe.debug">
 					<folderInfo id="cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.macosx.base.2130795161" name="MacOSX GCC" nonInternalBuilderId="cdt.managedbuild.target.gnu.builder.macosx.base" superClass="cdt.managedbuild.toolchain.gnu.macosx.base">
-							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.MachO64" id="cdt.managedbuild.target.gnu.platform.macosx.base.536540274" name="Debug Platform" osList="macosx" superClass="cdt.managedbuild.target.gnu.platform.macosx.base"/>
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.PE" id="cdt.managedbuild.target.gnu.platform.macosx.base.536540274" name="Debug Platform" osList="macosx" superClass="cdt.managedbuild.target.gnu.platform.macosx.base"/>
 							<builder buildPath="${workspace_loc:/CTag}/Debug" id="cdt.managedbuild.builder.gnu.cross.546025268" keepEnvironmentInBuildfile="false" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross"/>
 							<tool id="cdt.managedbuild.tool.macosx.c.linker.macosx.base.939485083" name="MacOS X C Linker" superClass="cdt.managedbuild.tool.macosx.c.linker.macosx.base"/>
 							<tool command="/opt/local/bin/g++" id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.base.722965086" name="MacOS X C++ Linker" superClass="cdt.managedbuild.tool.macosx.cpp.linker.macosx.base">
@@ -74,9 +74,7 @@
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933.1574432105" moduleId="org.eclipse.cdt.core.settings" name="DebugWin">
 				<externalSettings/>
 				<extensions>
-					<extension id="org.eclipse.cdt.core.MachO64" point="org.eclipse.cdt.core.BinaryParser"/>
-					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.PE" point="org.eclipse.cdt.core.BinaryParser"/>
 					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
@@ -85,49 +83,49 @@
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933.1574432105" name="DebugWin" parent="cdt.managedbuild.config.gnu.macosx.exe.debug">
 					<folderInfo id="cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933.1574432105." name="/" resourcePath="">
-						<toolChain id="cdt.managedbuild.toolchain.gnu.macosx.exe.debug.1623421488" name="MacOSX GCC" superClass="cdt.managedbuild.toolchain.gnu.macosx.exe.debug">
-							<targetPlatform binaryParser="org.eclipse.cdt.core.MachO64" id="cdt.managedbuild.target.gnu.platform.macosx.exe.debug.873003238" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.macosx.exe.debug"/>
-							<builder buildPath="${workspace_loc:/CTag}/Debug" id="cdt.managedbuild.target.gnu.builder.macosx.exe.debug.476618948" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.macosx.exe.debug"/>
-							<tool id="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.debug.1888116457" name="MacOS X C Linker" superClass="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.debug"/>
-							<tool command="g++" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.exe.debug.567183500" name="MacOS X C++ Linker" superClass="cdt.managedbuild.tool.macosx.cpp.linker.macosx.exe.debug">
-								<option id="macosx.cpp.link.option.paths.232758499" name="Library search path (-L)" superClass="macosx.cpp.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;C:\lib\boost\boost_1_53_0\stage\lib&quot;"/>
+						<toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base.84605548" name="MinGW GCC" superClass="cdt.managedbuild.toolchain.gnu.mingw.base">
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.PE" id="cdt.managedbuild.target.gnu.platform.mingw.base.708763125" name="Debug Platform" osList="win32" superClass="cdt.managedbuild.target.gnu.platform.mingw.base"/>
+							<builder buildPath="${workspace_loc:/ctag}/DebugWin" id="cdt.managedbuild.tool.gnu.builder.mingw.base.1296442262" keepEnvironmentInBuildfile="false" name="CDT Internal Builder" superClass="cdt.managedbuild.tool.gnu.builder.mingw.base"/>
+							<tool id="cdt.managedbuild.tool.gnu.assembler.mingw.base.669634790" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.mingw.base">
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.253992411" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.archiver.mingw.base.451934983" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.mingw.base"/>
+							<tool command="g++" id="cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base.577002710" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base">
+								<option id="gnu.cpp.compiler.option.include.paths.1287860185" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;C:\lib\boost\boost_1_53_0&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ctag/include}&quot;"/>
 								</option>
-								<option id="macosx.cpp.link.option.libs.1416834164" name="Libraries (-l)" superClass="macosx.cpp.link.option.libs" valueType="libs">
+								<option id="gnu.cpp.compiler.option.preprocessor.def.761682633" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="DEBUG"/>
+								</option>
+								<option id="gnu.cpp.compiler.option.optimization.level.19506692" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.debugging.level.521296312" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.other.other.1308236876" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -std=c++11" valueType="string"/>
+								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.62585269" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.c.compiler.mingw.base.1063153956" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.mingw.base">
+								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.option.optimization.level.625961629" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" valueType="enumerated"/>
+								<option id="gnu.c.compiler.option.debugging.level.337364596" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
+								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1323936432" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.base.1629672483" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.base"/>
+							<tool command="g++" id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base.2127010717" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base">
+								<option id="gnu.cpp.link.option.libs.1457170521" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="boost_filesystem-mgw47-mt-1_53"/>
 									<listOptionValue builtIn="false" value="boost_system-mgw47-mt-1_53"/>
 									<listOptionValue builtIn="false" value="boost_program_options-mgw47-mt-1_53"/>
 								</option>
-								<option id="macosx.cpp.link.option.other.1197065260" name="Other options (-Xlinker [option])" superClass="macosx.cpp.link.option.other"/>
-								<option id="macosx.cpp.link.option.flags.1257337030" name="Linker flags" superClass="macosx.cpp.link.option.flags" value="-Bstatic" valueType="string"/>
-								<option id="macosx.cpp.link.option.shared.831787906" name="Shared (-dynamiclib)" superClass="macosx.cpp.link.option.shared" value="false" valueType="boolean"/>
-								<inputType id="cdt.managedbuild.tool.macosx.cpp.linker.input.1196889976" superClass="cdt.managedbuild.tool.macosx.cpp.linker.input">
+								<option id="gnu.cpp.link.option.userobjs.1798804763" name="Other objects" superClass="gnu.cpp.link.option.userobjs" valueType="userObjs">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/lib/sqlite3.o}&quot;"/>
+								</option>
+								<option id="gnu.cpp.link.option.paths.16416502" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="&quot;C:\lib\boost\boost_1_53_0\stage\lib&quot;"/>
+								</option>
+								<option id="gnu.cpp.link.option.flags.633080244" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-Bstatic" valueType="string"/>
+								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1742739441" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
 								</inputType>
-							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.assembler.macosx.exe.debug.1209466094" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.macosx.exe.debug">
-								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.973900160" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
-							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.archiver.macosx.base.603584634" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.macosx.base"/>
-							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.exe.debug.1401956330" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.exe.debug">
-								<option id="gnu.cpp.compilermacosx.exe.debug.option.optimization.level.1760913051" name="Optimization Level" superClass="gnu.cpp.compilermacosx.exe.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
-								<option id="gnu.cpp.compiler.macosx.exe.debug.option.debugging.level.1026679818" name="Debug Level" superClass="gnu.cpp.compiler.macosx.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
-								<option id="gnu.cpp.compiler.option.include.paths.1751936015" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;C:\lib\boost\boost_1_53_0&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CTag/include}&quot;"/>
-									<listOptionValue builtIn="false" value="/usr/lib/clang/4.2/include"/>
-								</option>
-								<option id="gnu.cpp.compiler.option.other.other.1617459899" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -std=c++11" valueType="string"/>
-								<option id="gnu.cpp.compiler.option.preprocessor.def.488827188" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="DEBUG"/>
-								</option>
-								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1397241580" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
-							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.c.compiler.macosx.exe.debug.5085401" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.macosx.exe.debug">
-								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.macosx.exe.debug.option.optimization.level.1916499109" name="Optimization Level" superClass="gnu.c.compiler.macosx.exe.debug.option.optimization.level" valueType="enumerated"/>
-								<option id="gnu.c.compiler.macosx.exe.debug.option.debugging.level.310838821" name="Debug Level" superClass="gnu.c.compiler.macosx.exe.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
-								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.826618697" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 						</toolChain>
 					</folderInfo>
@@ -149,8 +147,9 @@
 			<resource resourceType="PROJECT" workspacePath="/CTag"/>
 		</configuration>
 		<configuration configurationName="DebugWin">
-			<resource resourceType="PROJECT" workspacePath="/CTag"/>
+			<resource resourceType="PROJECT" workspacePath="/ctag"/>
 		</configuration>
+		<configuration configurationName="DebugMac"/>
 		<configuration configurationName="Debug">
 			<resource resourceType="PROJECT" workspacePath="/CTag"/>
 		</configuration>
@@ -170,13 +169,13 @@
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933;cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933.;cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base.210121361;cdt.managedbuild.tool.gnu.cpp.compiler.input.1362239558">
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933.1574432105;cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933.1574432105.;cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base.577002710;cdt.managedbuild.tool.gnu.cpp.compiler.input.62585269">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933;cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933.;cdt.managedbuild.tool.gnu.c.compiler.base.1181583885;cdt.managedbuild.tool.gnu.c.compiler.input.426289187">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933;cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933.;cdt.managedbuild.tool.gnu.c.compiler.macosx.base.1056281555;cdt.managedbuild.tool.gnu.c.compiler.input.869838227">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933;cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933.;cdt.managedbuild.tool.gnu.cpp.compiler.macosx.exe.debug.798011646;cdt.managedbuild.tool.gnu.cpp.compiler.input.1226623006">
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933.1574432105;cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933.1574432105.;cdt.managedbuild.tool.gnu.cpp.compiler.macosx.exe.debug.1401956330;cdt.managedbuild.tool.gnu.cpp.compiler.input.1397241580">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933;cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933.;cdt.managedbuild.tool.gnu.c.compiler.macosx.exe.debug.485735288;cdt.managedbuild.tool.gnu.c.compiler.input.1614027831">
@@ -185,16 +184,22 @@
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933;cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933.;cdt.managedbuild.tool.gnu.cpp.compiler.base.1840470344;cdt.managedbuild.tool.gnu.cpp.compiler.input.1150531847">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.macosx.exe.release.426254111;cdt.managedbuild.config.macosx.exe.release.426254111.;cdt.managedbuild.tool.gnu.c.compiler.macosx.exe.release.1026638512;cdt.managedbuild.tool.gnu.c.compiler.input.63427139">
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933;cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933.;cdt.managedbuild.tool.gnu.c.compiler.macosx.base.1056281555;cdt.managedbuild.tool.gnu.c.compiler.input.869838227">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933;cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933.;cdt.managedbuild.tool.gnu.c.compiler.base.1181583885;cdt.managedbuild.tool.gnu.c.compiler.input.426289187">
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933;cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933.;cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base.210121361;cdt.managedbuild.tool.gnu.cpp.compiler.input.1362239558">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933.1574432105;cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933.1574432105.;cdt.managedbuild.tool.gnu.c.compiler.mingw.base.1063153956;cdt.managedbuild.tool.gnu.c.compiler.input.1323936432">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.macosx.exe.release.426254111;cdt.managedbuild.config.macosx.exe.release.426254111.;cdt.managedbuild.tool.gnu.cpp.compiler.macosx.exe.release.2018879282;cdt.managedbuild.tool.gnu.cpp.compiler.input.1900199080">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933.1574432105;cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933.1574432105.;cdt.managedbuild.tool.gnu.cpp.compiler.macosx.exe.debug.1401956330;cdt.managedbuild.tool.gnu.cpp.compiler.input.1397241580">
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.macosx.exe.release.426254111;cdt.managedbuild.config.macosx.exe.release.426254111.;cdt.managedbuild.tool.gnu.c.compiler.macosx.exe.release.1026638512;cdt.managedbuild.tool.gnu.c.compiler.input.63427139">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933;cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933.;cdt.managedbuild.tool.gnu.cpp.compiler.macosx.exe.debug.798011646;cdt.managedbuild.tool.gnu.cpp.compiler.input.1226623006">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933.1574432105;cdt.managedbuild.config.gnu.macosx.exe.debug.1807079933.1574432105.;cdt.managedbuild.tool.gnu.c.compiler.macosx.exe.debug.5085401;cdt.managedbuild.tool.gnu.c.compiler.input.826618697">

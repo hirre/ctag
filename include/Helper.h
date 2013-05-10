@@ -26,25 +26,32 @@
 #ifndef HELPER_H_
 #define HELPER_H_
 
+#ifndef _WIN32
 #include <pwd.h>
+#define PATH_SEPARATOR "/"
+#else
+#define PATH_SEPARATOR "\\"
+#endif
+
 #include <unistd.h>
 
 /*
- * Function that returns the home folder independent of OS.
+ * Function that returns the home folder independent of the OS.
  */
 inline static const char * getHomeFolder()
 {
 #ifdef _WIN32
     std::string home = getenv("USERPROFILE");
     // Home found
-    if(!home.empty())
+    if (!home.empty())
     {
         return home.c_str();
     }
     else // Home not found
     {
-        std::string home = getenv("HOMEDRIVE") + getenv("HOMEPATH");
-        return home.c_str();
+        std::stringstream home;
+        home << getenv("HOMEDRIVE") << getenv("HOMEPATH");
+        return home.str().c_str();
     }
 #else
     std::string home = getenv("HOME");
@@ -55,8 +62,8 @@ inline static const char * getHomeFolder()
         return home.c_str();
     }
     else
-        // Home not found
-        return getpwuid(getuid())->pw_dir;
+    // Home not found
+    return getpwuid(getuid())->pw_dir;
 #endif
 
     // Should not be reached
