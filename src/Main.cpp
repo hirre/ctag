@@ -54,11 +54,11 @@ int main(int argc, char** argv)
                 "arg= <tag-string> <file(s)/folder(s)>, e.g. \"-r helo /test/file7.txt\", or "
                         "\"-r helo /test/*.txt\" for all txt files in a specific folder, or "
                         "\"-r helo /test/\" to remove tag for a specific folder, "
-                        "use \"#\" (without quotes) instead of tag name to remove all tags for file(s)/folder(s)")(
+                        "use \"#\" (with quotes) instead of tag name to remove all tags for file(s)/folder(s)")(
                 "showtag,s", bpo::value<vector<string> >()->multitoken(),
                 "arg= <tag> <file(s)/folder(s)> to show file(s)/folder(s) with a specific tag, "
                         "e.g. \"-s testtag /usr/lib/*\" shows all files in \"/usr/lib/\" tagged with \"testtag\", "
-                        "use \"#\" (without quotes) instead of tag name to show all tags")(
+                        "use \"#\" (with quotes) instead of tag name to show all tags")(
                 "version,v", "version number");
 
         // Map for storing input
