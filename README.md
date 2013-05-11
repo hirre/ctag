@@ -29,8 +29,3 @@ If you use Windows, environmental variables %USERPROFILE% or %HOMEDRIVE% and %HO
  
 ### LICENSE
 [GNU General Public License v3](http://www.gnu.org/licenses/gpl.html)
-
-### TODO
-- Room for improved command descriptions in help.
-- Testing different inputs.
-- Testing on Linux.
