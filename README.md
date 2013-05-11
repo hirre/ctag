@@ -24,11 +24,9 @@ Example: OS X 10.8.3, g++ >=4.7
     g++ -I/usr/local/lib/boost_1_53_0/ -I"/Users/hirre/dev/ctag/include" -O3 -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"src/Main.d" -MT"src/Main.d" -o "src/Main.o" "../src/Main.cpp"
     g++ -L/usr/local/lib/boost_1_53_0/stage/lib -Bstatic -o "ctag"  ./test/CTagTest.o  ./src/core/CTagHandler.o  ./src/Main.o  /Users/hirre/dev/CTag/lib/sqlite3.o -lboost_program_options -lboost_system -lboost_filesystem
 
-(Linker uses specific static boost libraries and sqlite3.o)
-
-It is required that if you use Windows, environmental variables %USERPROFILE% or %HOMEDRIVE% and %HOMEPATH% must be set (usually they are). In OSX or Linux $HOME must be set (usually is).
-
-If "TEST" is defined you need to dynamically link "boost_unit_test_framework" and set the corresponding environmental variable for dynamic libraries (OS dependent).
+- Linker uses specific static boost libraries and sqlite3.o.
+- It is required that if you use Windows, environmental variables %USERPROFILE% or %HOMEDRIVE% and %HOMEPATH% must be set (usually they are). In OSX or Linux $HOME must be set (usually is).
+- If "TEST" is defined you need to dynamically link "boost_unit_test_framework" by setting the corresponding environmental variable for dynamic libraries (OS dependent).
  
 ### LICENSE
 [GNU General Public License v3](http://www.gnu.org/licenses/gpl.html)
