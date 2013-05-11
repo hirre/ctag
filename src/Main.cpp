@@ -140,7 +140,7 @@ int main(int argc, char** argv)
     } catch (bpo::error& e)
     {
         // Write error to stderr
-        cerr << e.what();
+        cerr << "Invalid arguments." << std::endl;
         return 1;
     }
 
