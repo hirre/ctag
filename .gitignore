@@ -39,9 +39,11 @@ Thumbs.db
 
 # Other
 ######################
+lib/
 Debug/
 DebugWin/
 Release/
 ReleaseWin/
 .settings/
 /DebugMac
+/ReleaseMac
