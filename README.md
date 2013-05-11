@@ -20,14 +20,11 @@ ctag [flag] [arguments]
 Example: OS X 10.8.3, g++ >=4.7
 
     g++ -I/usr/local/lib/boost_1_53_0/ -I"/Users/hirre/dev/ctag/include" -O3 -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"test/CTagTest.d" -MT"test/CTagTest.d" -o "test/CTagTest.o" "../test/CTagTest.cpp"
-Finished building: ../test/CTagTest.cpp
-     
+         
     g++ -I/usr/local/lib/boost_1_53_0/ -I"/Users/hirre/dev/ctag/include" -O3 -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"src/core/CTagHandler.d" -MT"src/core/CTagHandler.d" -o "src/core/CTagHandler.o" "../src/core/CTagHandler.cpp"
-Finished building: ../src/core/CTagHandler.cpp
-     
+         
     g++ -I/usr/local/lib/boost_1_53_0/ -I"/Users/hirre/dev/ctag/include" -O3 -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"src/Main.d" -MT"src/Main.d" -o "src/Main.o" "../src/Main.cpp"
-Finished building: ../src/Main.cpp  
-    
+        
     g++ -L/usr/local/lib/boost_1_53_0/stage/lib -Bstatic -o "ctag"  ./test/CTagTest.o  ./src/core/CTagHandler.o  ./src/Main.o  /Users/hirre/dev/CTag/lib/sqlite3.o -lboost_program_options -lboost_system -lboost_filesystem
 
 (Linker uses specific static boost libraries and sqlite3.o)
