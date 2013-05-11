@@ -16,12 +16,19 @@ ctag [flag] [arguments]
 - Boost >=1.53.
 - SQLite (Sqlite3.o) >=3.7.16.2 (download [Amalgamation](http://www.sqlite.org/download.html) and compile your own .o-file with e.g. gcc).
 
-### COMPILATION
-Example: Windows 7, MinGW & g++ >=4.7
+### REQUIREMENTS
+Example: OS X 10.8.3, g++ >=4.7
 
-    g++ "-IC:\\lib\\boost\\boost_1_53_0" "-IC:\\Users\\me\\dev\\ctag\\include" -O3 -c -fmessage-length=0 -std=c++11 -o "src\\Main.o" "..\\src\\Main.cpp"
- 
-    g++ "-LC:\\lib\\boost\\boost_1_53_0\\stage\\lib" -Bstatic -o ctag "src\\core\\CTagHandler.o" "src\\Main.o" "..\\lib\\sqlite3.o" -lboost_filesystem-mgw47-mt-1_53 -lboost_system-mgw47-mt-1_53 -lboost_program_options-mgw47-mt-1_53
+    g++ -I/usr/local/lib/boost_1_53_0/ -I"/Users/hirre/dev/ctag/include" -O3 -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"test/CTagTest.d" -MT"test/CTagTest.d" -o "test/CTagTest.o" "../test/CTagTest.cpp"
+Finished building: ../test/CTagTest.cpp
+     
+    g++ -I/usr/local/lib/boost_1_53_0/ -I"/Users/hirre/dev/ctag/include" -O3 -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"src/core/CTagHandler.d" -MT"src/core/CTagHandler.d" -o "src/core/CTagHandler.o" "../src/core/CTagHandler.cpp"
+Finished building: ../src/core/CTagHandler.cpp
+     
+    g++ -I/usr/local/lib/boost_1_53_0/ -I"/Users/hirre/dev/ctag/include" -O3 -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"src/Main.d" -MT"src/Main.d" -o "src/Main.o" "../src/Main.cpp"
+Finished building: ../src/Main.cpp  
+    
+    g++ -L/usr/local/lib/boost_1_53_0/stage/lib -Bstatic -o "ctag"  ./test/CTagTest.o  ./src/core/CTagHandler.o  ./src/Main.o  /Users/hirre/dev/CTag/lib/sqlite3.o -lboost_program_options -lboost_system -lboost_filesystem
 
 (Linker uses specific static boost libraries and sqlite3.o)
 
