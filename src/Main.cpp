@@ -34,6 +34,7 @@
 namespace bpo = boost::program_options;
 using namespace std;
 
+#ifndef TEST
 /*
  * Main function.
  */
@@ -42,7 +43,6 @@ int main(int argc, char** argv)
     try
     {
         // TODO: room for improved command descriptions
-        // TODO: test different inputs
         // Create options
         bpo::options_description opts("Usage");
         opts.add_options()("help,h", "help message")("tag,t",
@@ -146,3 +146,5 @@ int main(int argc, char** argv)
 
     return 0;
 }
+
+#endif
