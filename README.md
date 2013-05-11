@@ -25,6 +25,8 @@ Example: Windows 7, MinGW & g++ >=4.7
 
 (Linker uses specific static boost libraries and sqlite3.o)
 
+If "TEST" is defined you need to dynamically link "boost_unit_test_framework".
+
 If you use Windows, environmental variables %USERPROFILE% or %HOMEDRIVE% and %HOMEPATH% must be set (usually they are). In OSX or Linux $HOME must be set (usually is).
  
 ### LICENSE
