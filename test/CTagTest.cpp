@@ -40,12 +40,12 @@ BOOST_AUTO_TEST_SUITE(ctag_test_suite)
 BOOST_AUTO_TEST_CASE( tag_test )
 {
     ctag::CTagHandler handler;
-    char* c = genChar();
+    std::vector<char> vec = genChars();
 
-    for(int i = 0; i < ARRAY_SIZE; i++)
+    for(unsigned int i = 0; i < vec.size(); i++)
     {
         std::vector<std::string> inputVec;
-        inputVec.push_back(std::string("arg")+c[i]);
+        inputVec.push_back(std::string("arg")+vec[i]);
         // Root path always exists
         inputVec.push_back(std::string("/"));
         std::cout << ">> INPUT: " << inputVec[0] << " " << inputVec[1] << std::endl;
@@ -57,8 +57,6 @@ BOOST_AUTO_TEST_CASE( tag_test )
             // Incorrect input, try to tag it, expect false result, assert on true
             BOOST_ASSERT(handler.processInput(inputVec, std::string("tag")) == false);
     }
-
-    delete [] c;
 }
 
 /*

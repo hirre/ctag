@@ -28,23 +28,20 @@
 #define CTAGTEST_HPP_
 
 #include <iostream>
-#define ARRAY_SIZE (127-32)
 
 /*
- * Generates char array
- * Take care of memory allocation!
+ * Generates vector of chars
  */
-char* genChar()
+std::vector<char> genChars()
 {
-    // Watch out for memory leak
-    char* c = new char[ARRAY_SIZE];
+    std::vector<char> vec;
 
     for (int i = 32; i < 127; i++)
     {
-        c[i-32] = i;
+        vec.push_back(i);
     }
 
-    return c;
+    return vec;
 }
 
 #endif /* CTAGTEST_HPP_ */
