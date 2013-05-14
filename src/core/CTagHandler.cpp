@@ -116,7 +116,7 @@ bool CTagHandler::tag(const std::vector<std::string>& fVec)
     std::string tagName = fVec[0];
 
     // Verify tag name
-    if(!verifyInput(tagName))
+    if(!verifyInput(tagName, REGEX_MAIN))
     {
         std::cout << "Tag name can only contain numbers, letters, \"_\" and \"-\"." << std::endl;
         return false;
@@ -176,7 +176,7 @@ bool CTagHandler::removeTag(const std::vector<std::string>& fVec)
     std::string tagName = fVec[0];
 
     // Verify tag name
-    if(!verifyInput(tagName))
+    if(!verifyInput(tagName, REGEX_MAIN))
     {
         std::cout << "Tag name can only contain numbers, letters, \"_\" and \"-\"." << std::endl;
         return false;
@@ -252,7 +252,7 @@ bool CTagHandler::showTag(const std::vector<std::string>& fVec)
     bool foundTag = false;
 
     // Verify tag name
-    if(!verifyInput(tagName))
+    if(!verifyInput(tagName, REGEX_SHOW))
     {
         std::cout << "Tag name can only contain numbers, letters, \"_\" and \"-\"." << std::endl;
         return false;

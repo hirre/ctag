@@ -30,6 +30,11 @@
 #ifndef CTAGHANDLER_HPP_
 #define CTAGHANDLER_HPP_
 
+// Allow numbers, letters, "_" and "-"
+#define REGEX_MAIN "^[a-zA-Z0-9_]*$"
+// Allow numbers, letters, "_", "-", quotes and #
+#define REGEX_SHOW "^[a-zA-Z0-9_\"#]*$"
+
 #include <iostream>
 #include <vector>
 #include "sqlite3.h"

@@ -33,9 +33,6 @@
 #define PATH_SEPARATOR "\\"
 #endif
 
-// Allow numbers, letters, "_" and "-"
-#define REGEX_STR "^[a-zA-Z0-9_]*$"
-
 #include <unistd.h>
 #include <boost/regex.hpp>
 
@@ -95,9 +92,9 @@ inline static const char * getHomeFolder()
 /*
  * Verify if input is correct.
  */
-inline static bool verifyInput(std::string str)
+inline static bool verifyInput(std::string str, std::string regex)
 {
-    static const boost::regex e(REGEX_STR);
+    static const boost::regex e(regex);
     return regex_match(str, e);
 }
 

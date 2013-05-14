@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_SUITE(ctag_test_suite)
 /*
  * Tag test for different inputs.
  */
-BOOST_AUTO_TEST_CASE( input_tag_test )
+BOOST_AUTO_TEST_CASE( tag_test )
 {
     ctag::CTagHandler handler;
     char* c = genChar();
@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE( input_tag_test )
         std::cout << ">> INPUT: " << inputVec[0] << " " << inputVec[1] << std::endl;
 
         // Correct input, try to tag it, expect true result, assert on false
-        if(verifyInput(inputVec[0]))
+        if(verifyInput(inputVec[0], REGEX_MAIN))
             BOOST_ASSERT(handler.processInput(inputVec, std::string("tag")) == true);
         else
             // Incorrect input, try to tag it, expect false result, assert on true
@@ -59,6 +59,14 @@ BOOST_AUTO_TEST_CASE( input_tag_test )
     }
 
     delete [] c;
+}
+
+/*
+ * Show tag test for different inputs.
+ */
+BOOST_AUTO_TEST_CASE( show_test )
+{
+
 }
 
 BOOST_AUTO_TEST_SUITE_END()
