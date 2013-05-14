@@ -27,8 +27,8 @@
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE CTagTestModule
 
-#include "CTagTest.hpp"
 #include <boost/test/auto_unit_test.hpp>
+#include "CTagTest.hpp"
 #include "../src/core/CTagHandler.hpp"
 #include "../include/Helper.hpp"
 
@@ -64,7 +64,15 @@ BOOST_AUTO_TEST_CASE( tag_test )
 /*
  * Show tag test for different inputs.
  */
-BOOST_AUTO_TEST_CASE( show_test )
+BOOST_AUTO_TEST_CASE( show_tag_test )
+{
+
+}
+
+/*
+ * Remove tag test for different inputs.
+ */
+BOOST_AUTO_TEST_CASE( remove_tag_test )
 {
 
 }
