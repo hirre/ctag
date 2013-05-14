@@ -30,9 +30,9 @@
 #include <stdlib.h>
 #include <sstream>
 #include <boost/filesystem.hpp>
-#include "CTagHandler.h"
+#include "CTagHandler.hpp"
 #include "Debug.hpp"
-#include "Helper.h"
+#include "Helper.hpp"
 
 namespace ctag
 {
@@ -115,6 +115,13 @@ bool CTagHandler::tag(const std::vector<std::string>& fVec)
     // Tag name
     std::string tagName = fVec[0];
 
+    // Verify tag name
+    if(!verifyInput(tagName))
+    {
+        std::cout << "Tag name can only contain numbers, letters, \"_\" and \"-\"." << std::endl;
+        return false;
+    }
+
     // Go through path(s)
     for (unsigned int i = 1; i < fVec.size(); i++)
     {
@@ -167,6 +174,13 @@ bool CTagHandler::removeTag(const std::vector<std::string>& fVec)
 {
     // Tag name
     std::string tagName = fVec[0];
+
+    // Verify tag name
+    if(!verifyInput(tagName))
+    {
+        std::cout << "Tag name can only contain numbers, letters, \"_\" and \"-\"." << std::endl;
+        return false;
+    }
 
     // Removed rows
     bool removedRows = false;
@@ -236,6 +250,13 @@ bool CTagHandler::showTag(const std::vector<std::string>& fVec)
     // Tag name
     std::string tagName = fVec[0];
     bool foundTag = false;
+
+    // Verify tag name
+    if(!verifyInput(tagName))
+    {
+        std::cout << "Tag name can only contain numbers, letters, \"_\" and \"-\"." << std::endl;
+        return false;
+    }
 
     // Go through path(s)
     for (unsigned int i = 1; i < fVec.size(); i++)
@@ -324,9 +345,9 @@ bool CTagHandler::showTag(const std::vector<std::string>& fVec)
 }
 
 /*
- * Method to process input from the command line.
+ * Method to process input from the command line. Returns true on success.
  */
-void CTagHandler::processInput(const std::vector<std::string>& argVec,
+bool CTagHandler::processInput(const std::vector<std::string>& argVec,
         const std::string& flag)
 {
     // Check if database can be opened
@@ -334,15 +355,17 @@ void CTagHandler::processInput(const std::vector<std::string>& argVec,
     {
         std::cerr << "Could not connect or create DB in home folder!"
                 << std::endl;
-        return;
+        return false;
     }
 
     // Init db
     if (!initDB())
     {
         std::cerr << "Could not initialize DB!" << std::endl;
-        return;
+        return false;
     }
+
+    bool error = false;
 
     if (flag.compare("tag") == 0)
     {
@@ -352,6 +375,8 @@ void CTagHandler::processInput(const std::vector<std::string>& argVec,
         // Tag
         if (tag(argVec))
             std::cout << "Tagged!" << std::endl;
+        else
+            error = true;
     }
     else if (flag.compare("removetag") == 0)
     {
@@ -361,7 +386,10 @@ void CTagHandler::processInput(const std::vector<std::string>& argVec,
         if (removeTag(argVec))
             std::cout << "Removed tag(s)." << std::endl;
         else
+        {
             std::cout << "No row(s) removed." << std::endl;
+            error = true;
+        }
     }
     else if (flag.compare("showtag") == 0)
     {
@@ -371,11 +399,16 @@ void CTagHandler::processInput(const std::vector<std::string>& argVec,
 
         // Show tag
         if (!showTag(argVec))
+        {
             std::cerr << "Tag(s) not found." << std::endl;
+            error = true;
+        }
     }
 
     // Close db
     sqlite3_close(database);
+
+    return !error;
 }
 
 } /* namespace ctag */

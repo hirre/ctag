@@ -29,7 +29,7 @@
 #include <boost/lexical_cast.hpp>
 #include <iostream>
 #include "Debug.hpp"
-#include "core/CTagHandler.h"
+#include "core/CTagHandler.hpp"
 
 namespace bpo = boost::program_options;
 using namespace std;

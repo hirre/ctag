@@ -1,5 +1,5 @@
 /*
- *  CTagHandler.h
+ *  CTagHandler.hpp
  *
  *  Handler class that handles input from the command line.
  *  Handles:
@@ -27,8 +27,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CTAGHANDLER_H_
-#define CTAGHANDLER_H_
+#ifndef CTAGHANDLER_HPP_
+#define CTAGHANDLER_HPP_
 
 #include <iostream>
 #include <vector>
@@ -45,7 +45,7 @@ public:
     // Destructor
     virtual ~CTagHandler();
     // Method to process cmd line input
-    void processInput(const std::vector<std::string>& argVec,
+    bool processInput(const std::vector<std::string>& argVec,
             const std::string& flag);
 private:
     // Database
@@ -63,4 +63,4 @@ private:
 };
 
 } /* namespace ctag */
-#endif /* CTAGHANDLER_H_ */
+#endif /* CTAGHANDLER_HPP_ */

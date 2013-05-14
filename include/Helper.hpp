@@ -1,5 +1,5 @@
 /*
- *  Helper.h
+ *  Helper.hpp
  *
  *  Helper header for different purposes.
  *
@@ -23,8 +23,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HELPER_H_
-#define HELPER_H_
+#ifndef HELPER_HPP_
+#define HELPER_HPP_
 
 #ifndef _WIN32
 #include <pwd.h>
@@ -33,7 +33,11 @@
 #define PATH_SEPARATOR "\\"
 #endif
 
+// Allow numbers, letters, "_" and "-"
+#define REGEX_STR "^[a-zA-Z0-9_]*$"
+
 #include <unistd.h>
+#include <boost/regex.hpp>
 
 /*
  * Function that returns the home folder independent of the OS.
@@ -41,33 +45,60 @@
 inline static const char * getHomeFolder()
 {
 #ifdef _WIN32
-    std::string home = getenv("USERPROFILE");
+    char* homep = getenv("USERPROFILE");
     // Home found
-    if (!home.empty())
+    if (homep != NULL)
     {
-        return home.c_str();
+        return homep;
     }
     else // Home not found
     {
         std::stringstream home;
-        home << getenv("HOMEDRIVE") << getenv("HOMEPATH");
+        char* hd = getenv("HOMEDRIVE");
+        char* hp = getenv("HOMEPATH");
+
+        if(hd == NULL || hp == NULL)
+        {
+            std::cerr << "Home folder could not be found, make sure %HOMEDRIVE% and %HOMEPATH% are set." << std::endl;
+            exit(1);
+        }
+
+        home << hd << hp;
         return home.str().c_str();
     }
 #else
-    std::string home = getenv("HOME");
+    char* home = getenv("HOME");
 
     // Home found
-    if (!home.empty())
+    if (home != NULL)
     {
-        return home.c_str();
+        return home;
     }
     else
-    // Home not found
-    return getpwuid(getuid())->pw_dir;
-#endif
+    {
+        // Home not found
+        char* p = getpwuid(getuid())->pw_dir;
+        if (p == NULL)
+        {
+            std::cerr
+                    << "Home folder could not be found, make sure $HOME is set."
+                    << std::endl;
+            exit(1);
+        }
 
-    // Should not be reached
-    return "./";
+        return p;
+    }
+
+#endif
 }
 
-#endif /* HELPER_H_ */
+/*
+ * Verify if input is correct.
+ */
+inline static bool verifyInput(std::string str)
+{
+    static const boost::regex e(REGEX_STR);
+    return regex_match(str, e);
+}
+
+#endif /* HELPER_HPP_ */

@@ -27,13 +27,38 @@
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE CTagTestModule
 
+#include "CTagTest.hpp"
 #include <boost/test/auto_unit_test.hpp>
+#include "../src/core/CTagHandler.hpp"
+#include "../include/Helper.hpp"
 
 BOOST_AUTO_TEST_SUITE(ctag_test_suite)
 
-BOOST_AUTO_TEST_CASE( input_test )
+/*
+ * Tag test for different inputs.
+ */
+BOOST_AUTO_TEST_CASE( input_tag_test )
 {
-// TODO: implement test(s)
+    ctag::CTagHandler handler;
+    char* c = genChar();
+
+    for(int i = 0; i < ARRAY_SIZE; i++)
+    {
+        std::vector<std::string> inputVec;
+        inputVec.push_back(std::string("arg")+c[i]);
+        // Root path always exists
+        inputVec.push_back(std::string("/"));
+        std::cout << ">> INPUT: " << inputVec[0] << " " << inputVec[1] << std::endl;
+
+        // Correct input, try to tag it, expect true result, assert on false
+        if(verifyInput(inputVec[0]))
+            BOOST_ASSERT(handler.processInput(inputVec, std::string("tag")) == true);
+        else
+            // Incorrect input, try to tag it, expect false result, assert on true
+            BOOST_ASSERT(handler.processInput(inputVec, std::string("tag")) == false);
+    }
+
+    delete [] c;
 }
 
 BOOST_AUTO_TEST_SUITE_END()
