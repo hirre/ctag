@@ -30,14 +30,15 @@
 #ifndef CTAGHANDLER_HPP_
 #define CTAGHANDLER_HPP_
 
-// Allow numbers, letters, "_" and "-"
+// Allow numbers, letters and "_"
 #define REGEX_MAIN "^[a-zA-Z0-9_]*$"
-// Allow numbers, letters, "_", "-", quotes and #
-#define REGEX_SHOW "^[a-zA-Z0-9_\"#]*$"
+// Allow numbers, letters, "_", quotes, % and "#"
+#define REGEX_SHOW "^[a-zA-Z0-9_\"#%]*$"
 
 #include <iostream>
 #include <vector>
 #include "sqlite3.h"
+#include "Flags.h"
 
 namespace ctag
 {
@@ -51,7 +52,7 @@ public:
     virtual ~CTagHandler();
     // Method to process cmd line input
     bool processInput(const std::vector<std::string>& argVec,
-            const std::string& flag);
+            const Flag& flag);
 private:
     // Database
     sqlite3* database;

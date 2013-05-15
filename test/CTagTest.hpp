@@ -1,7 +1,7 @@
 /*
  * CTagTest.hpp
  *
- *  Unit tests for ctag.
+ *  Unit tests for ctag. Assumes database is empty!
  *
  *
  *  Created on: 13 maj 2013
@@ -28,6 +28,39 @@
 #define CTAGTEST_HPP_
 
 #include <iostream>
+#include <boost/algorithm/string.hpp>
+#include "../src/core/CTagHandler.hpp"
+#include "Flags.h"
+
+namespace ctagtest
+{
+
+/*
+ * Print headline.
+ */
+void printHeadline(const std::string& h)
+{
+    std::cout << "\n****************************************" << std::endl;
+    std::cout << boost::to_upper_copy(h) << std::endl;
+    std::cout << "****************************************\n" << std::endl;
+}
+
+/*
+ * Run flag with input against db. Second argument is always "/".
+ * Return true on success, else false.
+ */
+bool runFlagWithInput(const std::string& input, const ctag::Flag& flag)
+{
+    ctag::CTagHandler handler;
+    std::vector<std::string> inputVec;
+    inputVec.push_back(input);
+    // Root path always exists
+    inputVec.push_back("/");
+    // Print input
+    std::cout << ">> Running: \"" << input << " /\" (flag = " << flag << ")" << std::endl;
+    // Add test tag
+    return handler.processInput(inputVec, flag);
+}
 
 /*
  * Generates vector of chars
@@ -44,4 +77,5 @@ std::vector<char> genChars()
     return vec;
 }
 
+}
 #endif /* CTAGTEST_HPP_ */

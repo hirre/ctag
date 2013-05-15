@@ -92,7 +92,7 @@ inline static const char * getHomeFolder()
 /*
  * Verify if input is correct.
  */
-inline static bool verifyInput(std::string str, std::string regex)
+inline static bool verifyInput(const std::string& str, const std::string& regex)
 {
     static const boost::regex e(regex);
     return regex_match(str, e);

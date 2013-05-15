@@ -74,8 +74,8 @@ CTagHandler::~CTagHandler()
 bool CTagHandler::initDB()
 {
     const char* createTableSQL = "CREATE TABLE IF NOT EXISTS "
-            "tag(id INTEGER PRIMARY KEY, tagname TEXT, "
-            "path TEXT, dt TEXT, UNIQUE(tagname, path));";
+            "tag(id INTEGER PRIMARY KEY, tagname TEXT COLLATE NOCASE, "
+            "path TEXT COLLATE NOCASE, dt TEXT, UNIQUE(tagname, path));";
 
     const char* createIndexSQL =
             "CREATE INDEX IF NOT EXISTS tag_idx ON tag (tagname, path);";
@@ -116,10 +116,17 @@ bool CTagHandler::tag(const std::vector<std::string>& fVec)
     std::string tagName = fVec[0];
 
     // Verify tag name
-    if(!verifyInput(tagName, REGEX_MAIN))
+    if (!verifyInput(tagName, REGEX_MAIN))
     {
-        std::cout << "Tag name can only contain numbers, letters, \"_\" and \"-\"." << std::endl;
+        std::cout << "Tag name can only contain numbers, letters and \"_\"."
+                << std::endl;
+#ifdef TEST
         return false;
+#else
+        // Close db
+        sqlite3_close(database);
+        exit(1);
+#endif
     }
 
     // Go through path(s)
@@ -176,10 +183,17 @@ bool CTagHandler::removeTag(const std::vector<std::string>& fVec)
     std::string tagName = fVec[0];
 
     // Verify tag name
-    if(!verifyInput(tagName, REGEX_MAIN))
+    if (!verifyInput(tagName, REGEX_MAIN))
     {
-        std::cout << "Tag name can only contain numbers, letters, \"_\" and \"-\"." << std::endl;
+        std::cout << "Tag name can only contain numbers, letters and \"_\"."
+                << std::endl;
+#ifdef TEST
         return false;
+#else
+        // Close db
+        sqlite3_close(database);
+        exit(1);
+#endif
     }
 
     // Removed rows
@@ -252,10 +266,18 @@ bool CTagHandler::showTag(const std::vector<std::string>& fVec)
     bool foundTag = false;
 
     // Verify tag name
-    if(!verifyInput(tagName, REGEX_SHOW))
+    if (!verifyInput(tagName, REGEX_SHOW))
     {
-        std::cout << "Tag name can only contain numbers, letters, \"_\" and \"-\"." << std::endl;
+        std::cout
+                << "Tag name can only contain numbers, letters, \"#\" (with quotes), \"_\" and % (wildcard) for missing characters."
+                << std::endl;
+#ifdef TEST
         return false;
+#else
+        // Close db
+        sqlite3_close(database);
+        exit(1);
+#endif
     }
 
     // Go through path(s)
@@ -277,13 +299,13 @@ bool CTagHandler::showTag(const std::vector<std::string>& fVec)
             if (tagName.compare("#") == 0)
                 ss << "SELECT * FROM tag WHERE path = '"
                         << boost::filesystem::canonical(p).string()
-                        << "' ORDER BY dt DESC";
+                        << "' ORDER BY dt COLLATE NOCASE DESC";
             else
                 // Select specific tag
-                ss << "SELECT * FROM tag WHERE tagname = '" << tagName
+                ss << "SELECT * FROM tag WHERE tagname LIKE '" << tagName
                         << "' AND path = '"
                         << boost::filesystem::canonical(p).string()
-                        << "' ORDER BY dt DESC";
+                        << "' ORDER BY dt COLLATE NOCASE DESC";
 
             // Select statement
             if (sqlite3_prepare_v2(database, ss.str().c_str(), -1, &statement,
@@ -348,7 +370,7 @@ bool CTagHandler::showTag(const std::vector<std::string>& fVec)
  * Method to process input from the command line. Returns true on success.
  */
 bool CTagHandler::processInput(const std::vector<std::string>& argVec,
-        const std::string& flag)
+        const Flag& flag)
 {
     // Check if database can be opened
     if (sqlite3_open(path->c_str(), &database) != SQLITE_OK)
@@ -367,8 +389,9 @@ bool CTagHandler::processInput(const std::vector<std::string>& argVec,
 
     bool error = false;
 
-    if (flag.compare("tag") == 0)
+    switch (flag)
     {
+    case TAG:
 #ifdef DEBUG
         debug::dbgPrint("PROCESSING: tag");
 #endif
@@ -377,9 +400,9 @@ bool CTagHandler::processInput(const std::vector<std::string>& argVec,
             std::cout << "Tagged!" << std::endl;
         else
             error = true;
-    }
-    else if (flag.compare("removetag") == 0)
-    {
+        break;
+
+    case REMOVE_TAG:
 #ifdef DEBUG
         debug::dbgPrint("PROCESSING: removetag");
 #endif
@@ -387,12 +410,12 @@ bool CTagHandler::processInput(const std::vector<std::string>& argVec,
             std::cout << "Removed tag(s)." << std::endl;
         else
         {
-            std::cout << "No row(s) removed." << std::endl;
+            std::cout << "No tag(s) removed." << std::endl;
             error = true;
         }
-    }
-    else if (flag.compare("showtag") == 0)
-    {
+        break;
+
+    case SHOW_TAG:
 #ifdef DEBUG
         debug::dbgPrint("PROCESSING: showtag");
 #endif
@@ -403,6 +426,8 @@ bool CTagHandler::processInput(const std::vector<std::string>& argVec,
             std::cerr << "Tag(s) not found." << std::endl;
             error = true;
         }
+
+        break;
     }
 
     // Close db

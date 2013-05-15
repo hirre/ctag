@@ -1,7 +1,7 @@
 /*
  * CTagTest.cpp
  *
- *  Unit tests for ctag.
+ *  Unit tests for ctag. Assumes database is empty!
  *
  *  Created on: 11 maj 2013
  *  Author: Hirad Asadi
@@ -32,6 +32,9 @@
 #include "../src/core/CTagHandler.hpp"
 #include "../include/Helper.hpp"
 
+namespace ctagtest
+{
+
 BOOST_AUTO_TEST_SUITE(ctag_test_suite)
 
 /*
@@ -39,43 +42,56 @@ BOOST_AUTO_TEST_SUITE(ctag_test_suite)
  */
 BOOST_AUTO_TEST_CASE( tag_test )
 {
-    ctag::CTagHandler handler;
+    // Print headline
+    printHeadline("tag test");
+
     std::vector<char> vec = genChars();
 
-    for(unsigned int i = 0; i < vec.size(); i++)
+    for (unsigned int i = 0; i < vec.size(); i++)
     {
-        std::vector<std::string> inputVec;
-        inputVec.push_back(std::string("arg")+vec[i]);
-        // Root path always exists
-        inputVec.push_back(std::string("/"));
-        std::cout << ">> INPUT: " << inputVec[0] << " " << inputVec[1] << std::endl;
+        std::string input(std::string("arg") + vec[i]);
 
         // Correct input, try to tag it, expect true result, assert on false
-        if(verifyInput(inputVec[0], REGEX_MAIN))
-            BOOST_ASSERT(handler.processInput(inputVec, std::string("tag")) == true);
+        if (verifyInput(input, REGEX_MAIN))
+            BOOST_ASSERT(runFlagWithInput(input, ctag::TAG) == true);
         else
             // Incorrect input, try to tag it, expect false result, assert on true
-            BOOST_ASSERT(handler.processInput(inputVec, std::string("tag")) == false);
+            BOOST_ASSERT(runFlagWithInput(input, ctag::TAG) == false);
     }
 }
 
 /*
  * Show tag test for different inputs.
  */
+
 BOOST_AUTO_TEST_CASE( show_tag_test )
 {
+    // Print headline
+    printHeadline("show tag test");
 
+    // Insert to db tags
+    runFlagWithInput("TAG1_TEST", ctag::TAG);
+    runFlagWithInput("TAG2_TEST", ctag::TAG);
+
+    // Show tag test
+    // TODO: test fails even though real version works
+    BOOST_ASSERT(runFlagWithInput("tAg1_tEst", ctag::SHOW_TAG) == true);
+    BOOST_ASSERT(runFlagWithInput("tEst%", ctag::SHOW_TAG) == false);
+    BOOST_ASSERT(runFlagWithInput("%tEst", ctag::SHOW_TAG) == true);
 }
 
 /*
  * Remove tag test for different inputs.
  */
+
 BOOST_AUTO_TEST_CASE( remove_tag_test )
 {
+    // Print headline
+    printHeadline("remove tag test");
+}
+BOOST_AUTO_TEST_SUITE_END()
 
 }
-
-BOOST_AUTO_TEST_SUITE_END()
 
 #endif
 

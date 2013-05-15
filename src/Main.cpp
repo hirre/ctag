@@ -30,9 +30,11 @@
 #include <iostream>
 #include "Debug.hpp"
 #include "core/CTagHandler.hpp"
+#include "Flags.h"
 
 namespace bpo = boost::program_options;
 using namespace std;
+
 
 #ifndef TEST
 /*
@@ -48,17 +50,17 @@ int main(int argc, char** argv)
         opts.add_options()("help,h", "help message")("tag,t",
                 bpo::value<vector<string> >()->multitoken(),
                 "arg= <tag-string> <file(s)/folder(s)>, e.g. \"-t helo /test/file7.txt\", or "
-                        "\"-t helo /test/*.txt\" for all txt files in a specific folder, or "
-                        "\"-t helo /test/\" to tag a specific folder")(
+                "\"-t helo /test/*.txt\" for all txt files in a specific folder, or "
+                "\"-t helo /test/\" to tag a specific folder")(
                 "removetag,r", bpo::value<vector<string> >()->multitoken(),
                 "arg= <tag-string> <file(s)/folder(s)>, e.g. \"-r helo /test/file7.txt\", or "
-                        "\"-r helo /test/*.txt\" for all txt files in a specific folder, or "
-                        "\"-r helo /test/\" to remove tag for a specific folder, "
-                        "use \"#\" (with quotes) instead of tag name to remove all tags for file(s)/folder(s)")(
+                "\"-r helo /test/*.txt\" for all txt files in a specific folder, or "
+                "\"-r helo /test/\" to remove tag for a specific folder, "
+                "use \"#\" (with quotes) instead of tag name to remove all tags for file(s)/folder(s)")(
                 "showtag,s", bpo::value<vector<string> >()->multitoken(),
                 "arg= <tag> <file(s)/folder(s)> to show file(s)/folder(s) with a specific tag, "
-                        "e.g. \"-s testtag /usr/lib/*\" shows all files in \"/usr/lib/\" tagged with \"testtag\", "
-                        "use \"#\" (with quotes) instead of tag name to show all tags")(
+                "e.g. \"-s testtag /usr/lib/*\" shows all files in \"/usr/lib/\" tagged with \"testtag\", "
+                "use \"#\" (with quotes) instead of tag name to show all tags or combine tag name with % (wildcard) for missing characters")(
                 "version,v", "version number");
 
         // Map for storing input
@@ -87,14 +89,14 @@ int main(int argc, char** argv)
 #ifdef DEBUG
             debug::dbgPrint(
                     "--tag | nr of args: "
-                            + boost::lexical_cast<string>(argc - 2));
+                    + boost::lexical_cast<string>(argc - 2));
             debug::dbgPrintVector(vm["tag"].as<vector<string> >());
 #endif
             if ((argc - 2) >= 2)
-                cHandler.processInput(vm["tag"].as<vector<string> >(), "tag");
+            cHandler.processInput(vm["tag"].as<vector<string> >(), ctag::TAG);
             else
-                cerr << "Not the right number of arguments for tag flag."
-                        << std::endl;
+            cerr << "Not the right number of arguments for tag flag."
+            << std::endl;
         }
 
         // Manage "removetag" flag
@@ -103,15 +105,15 @@ int main(int argc, char** argv)
 #ifdef DEBUG
             debug::dbgPrint(
                     "--removetag | nr of args: "
-                            + boost::lexical_cast<string>(argc - 2));
+                    + boost::lexical_cast<string>(argc - 2));
             debug::dbgPrintVector(vm["removetag"].as<vector<string> >());
 #endif
             if ((argc - 2) >= 2)
-                cHandler.processInput(vm["removetag"].as<vector<string> >(),
-                        "removetag");
+            cHandler.processInput(vm["removetag"].as<vector<string> >(),
+                    ctag::REMOVE_TAG);
             else
-                cerr << "Not the right number of arguments for removetag flag."
-                        << std::endl;
+            cerr << "Not the right number of arguments for removetag flag."
+            << std::endl;
         }
 
         // Manage "showtag" flag
@@ -120,15 +122,15 @@ int main(int argc, char** argv)
 #ifdef DEBUG
             debug::dbgPrint(
                     "--showtag | nr of args: "
-                            + boost::lexical_cast<string>(argc - 2));
+                    + boost::lexical_cast<string>(argc - 2));
             debug::dbgPrintVector(vm["showtag"].as<vector<string> >());
 #endif
             if ((argc - 2) >= 2)
-                cHandler.processInput(vm["showtag"].as<vector<string> >(),
-                        "showtag");
+            cHandler.processInput(vm["showtag"].as<vector<string> >(),
+                    ctag::SHOW_TAG);
             else
-                cerr << "Not the right number of arguments for showtag flag."
-                        << std::endl;
+            cerr << "Not the right number of arguments for showtag flag."
+            << std::endl;
         }
 
         // Manage "version" flag
@@ -137,7 +139,8 @@ int main(int argc, char** argv)
             std::cout << "Version " + string(VERSION) << std::endl;
         }
 
-    } catch (bpo::error& e)
+    }
+    catch (bpo::error& e)
     {
         // Write error to stderr
         cerr << "Invalid arguments." << std::endl;
