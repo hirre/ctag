@@ -46,18 +46,20 @@ void printHeadline(const std::string& h)
 }
 
 /*
- * Run flag with input against db. Second argument is always "/".
+ * Run flag with input against db.
  * Return true on success, else false.
  */
-bool runFlagWithInput(const std::string& input, const ctag::Flag& flag)
+bool runFlagWithInput(const std::string& input, const ctag::Flag& flag,
+        const std::string& path = "/")
 {
     ctag::CTagHandler handler;
     std::vector<std::string> inputVec;
     inputVec.push_back(input);
     // Root path always exists
-    inputVec.push_back("/");
+    inputVec.push_back(path);
     // Print input
-    std::cout << ">> Running: \"" << input << " /\" (flag = " << flag << ")" << std::endl;
+    std::cout << "\n>> Running: \"" << inputVec[0] << " /\" (flag = " << flag
+            << ")\n" << std::endl;
     // Add test tag
     return handler.processInput(inputVec, flag);
 }

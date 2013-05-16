@@ -45,6 +45,9 @@ BOOST_AUTO_TEST_CASE( tag_test )
     // Print headline
     printHeadline("tag test");
 
+    // Try tagging the wrong path
+    BOOST_ASSERT(runFlagWithInput("TAG_wrong", ctag::TAG, "crazy/path") == false);
+
     std::vector<char> vec = genChars();
 
     for (unsigned int i = 0; i < vec.size(); i++)
@@ -73,11 +76,12 @@ BOOST_AUTO_TEST_CASE( show_tag_test )
     runFlagWithInput("TAG1_TEST", ctag::TAG);
     runFlagWithInput("TAG2_TEST", ctag::TAG);
 
-    // Show tag test
-    // TODO: test fails even though real version works
+    // Show tag test, test different variations
     BOOST_ASSERT(runFlagWithInput("tAg1_tEst", ctag::SHOW_TAG) == true);
     BOOST_ASSERT(runFlagWithInput("tEst%", ctag::SHOW_TAG) == false);
     BOOST_ASSERT(runFlagWithInput("%tEst", ctag::SHOW_TAG) == true);
+    BOOST_ASSERT(runFlagWithInput("#", ctag::SHOW_TAG) == true);
+    BOOST_ASSERT(runFlagWithInput("#", ctag::SHOW_TAG, "wrongPath/") == false);
 }
 
 /*
