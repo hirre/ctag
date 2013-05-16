@@ -38,7 +38,7 @@
 #include <iostream>
 #include <vector>
 #include "sqlite3.h"
-#include "Flags.h"
+#include "Flags.hpp"
 
 namespace ctag
 {

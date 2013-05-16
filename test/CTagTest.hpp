@@ -30,7 +30,7 @@
 #include <iostream>
 #include <boost/algorithm/string.hpp>
 #include "../src/core/CTagHandler.hpp"
-#include "Flags.h"
+#include "Flags.hpp"
 
 namespace ctagtest
 {

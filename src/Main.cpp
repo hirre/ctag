@@ -30,7 +30,7 @@
 #include <iostream>
 #include "Debug.hpp"
 #include "core/CTagHandler.hpp"
-#include "Flags.h"
+#include "Flags.hpp"
 
 namespace bpo = boost::program_options;
 using namespace std;
