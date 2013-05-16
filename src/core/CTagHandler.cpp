@@ -116,7 +116,7 @@ bool CTagHandler::tag(const std::vector<std::string>& fVec)
     std::string tagName = fVec[0];
 
     // Verify tag name
-    if (!verifyInput(tagName, REGEX_MAIN))
+    if (!verifyInput(tagName, REGEX_TAG))
     {
         std::cout << "Tag name can only contain numbers, letters and \"_\"."
                 << std::endl;
@@ -183,9 +183,9 @@ bool CTagHandler::removeTag(const std::vector<std::string>& fVec)
     std::string tagName = fVec[0];
 
     // Verify tag name
-    if (!verifyInput(tagName, REGEX_MAIN))
+    if (!verifyInput(tagName, REGEX_REMOVE))
     {
-        std::cout << "Tag name can only contain numbers, letters and \"_\"."
+        std::cout << "Tag name can only contain numbers, letters and \"_\" and \"#\"."
                 << std::endl;
 #ifdef TEST
         return false;
@@ -341,9 +341,14 @@ bool CTagHandler::showTag(const std::vector<std::string>& fVec)
                         std::string dt = (char*) sqlite3_column_text(statement,
                                 3);
 
-                        // Print found tag
-                        std::cout << "#" << tag << "\t" << pathStr << "\t["
-                                << dt << "]" << std::endl;
+                        // Print found tag(s)
+                        if (tagName.compare("#") == 0)
+                            std::cout << "#" << tag << "\t" << pathStr << "\t["
+                                    << dt << "]" << std::endl;
+                        else
+                            // Print path(s) found for specific tag
+                            std::cout << pathStr << "\t[" << dt << "]"
+                                    << std::endl;
                     }
                     else
                     {

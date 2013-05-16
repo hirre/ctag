@@ -9,6 +9,11 @@ ctag [flag] [arguments]
 (Multiple flags can be used)
 
 ### VERSION HISTORY 
+0.2:
+- Many bugs fixed.
+- Unit tests added.
+- Small changes here and there.
+
 0.1:
 - Support for adding, deleting and showing tags.
 

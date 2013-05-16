@@ -31,9 +31,11 @@
 #define CTAGHANDLER_HPP_
 
 // Allow numbers, letters and "_"
-#define REGEX_MAIN "^[a-zA-Z0-9_]*$"
+#define REGEX_TAG "^[a-zA-Z0-9_]*$"
 // Allow numbers, letters, "_", quotes, % and "#"
 #define REGEX_SHOW "^[a-zA-Z0-9_\"#%]*$"
+// Allow numbers, letters, "_", quotes and "#"
+#define REGEX_REMOVE "^[a-zA-Z0-9_\"#]*$"
 
 #include <iostream>
 #include <vector>

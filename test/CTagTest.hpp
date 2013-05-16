@@ -29,16 +29,22 @@
 
 #include <iostream>
 #include <boost/algorithm/string.hpp>
+#include <boost/date_time.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/lexical_cast.hpp>
 #include "../src/core/CTagHandler.hpp"
 #include "Flags.hpp"
 
 namespace ctagtest
 {
 
+// Global id
+static long double id = 0;
+
 /*
  * Print headline.
  */
-void printHeadline(const std::string& h)
+static inline void printHeadline(const std::string& h)
 {
     std::cout << "\n****************************************" << std::endl;
     std::cout << boost::to_upper_copy(h) << std::endl;
@@ -49,8 +55,8 @@ void printHeadline(const std::string& h)
  * Run flag with input against db.
  * Return true on success, else false.
  */
-bool runFlagWithInput(const std::string& input, const ctag::Flag& flag,
-        const std::string& path = "/")
+static inline bool runFlagWithInput(const std::string& input,
+        const ctag::Flag& flag, const std::string& path = "/")
 {
     ctag::CTagHandler handler;
     std::vector<std::string> inputVec;
@@ -58,8 +64,8 @@ bool runFlagWithInput(const std::string& input, const ctag::Flag& flag,
     // Root path always exists
     inputVec.push_back(path);
     // Print input
-    std::cout << "\n>> Running: \"" << inputVec[0] << " " << path << "\" (flag = " << flag
-            << ")\n" << std::endl;
+    std::cout << "\n>> Running: \"" << inputVec[0] << " " << path
+            << "\" (flag = " << flag << ")\n" << std::endl;
     // Add test tag
     return handler.processInput(inputVec, flag);
 }
@@ -77,6 +83,20 @@ std::vector<char> genChars()
     }
 
     return vec;
+}
+
+/**
+ * Returns a unique current time string.
+ */
+static inline const std::string uniqueStr()
+{
+    static const char* fmt = "_%Y%m%d%H%M%S_";
+    std::ostringstream ss;
+    ss.imbue(
+            std::locale(std::cout.getloc(),
+                    new boost::posix_time::time_facet(fmt)));
+    ss << id++ << boost::posix_time::second_clock::local_time();
+    return ss.str();
 }
 
 }

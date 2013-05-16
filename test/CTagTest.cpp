@@ -42,22 +42,27 @@ BOOST_AUTO_TEST_SUITE(ctag_test_suite)
  */
 BOOST_AUTO_TEST_CASE( tag_test )
 {
+    // Unique string
+    std::string unique(uniqueStr());
+
     // Print headline
     printHeadline("tag test");
 
-    // Try tagging the wrong path
-    BOOST_ASSERT(runFlagWithInput("TAG_wrong", ctag::TAG, "crazy/path") == false);
-
-    std::vector<char> vec = genChars();
     std::vector<std::string> cleanupVec;
+    std::vector<char> vec = genChars();
+
+    // Try tagging the wrong path
+    std::string tmp(unique + "TAG_wrong");
+    BOOST_ASSERT(runFlagWithInput(tmp, ctag::TAG, "crazy/path") == false);
+    cleanupVec.push_back(tmp);
 
     for (unsigned int i = 0; i < vec.size(); i++)
     {
-        std::string input(std::string("arg") + vec[i]);
+        std::string input(unique + vec[i]);
         bool b = runFlagWithInput(input, ctag::TAG);
 
         // Correct input, try to tag it, expect true result, assert on false
-        if (verifyInput(input, REGEX_MAIN))
+        if (verifyInput(input, REGEX_TAG))
         {
             BOOST_ASSERT(b == true);
         }
@@ -84,23 +89,26 @@ BOOST_AUTO_TEST_CASE( tag_test )
  */
 BOOST_AUTO_TEST_CASE( show_tag_test )
 {
+    // Unique string
+    std::string unique(uniqueStr());
+
     // Print headline
     printHeadline("show tag test");
 
     // Insert to db tags
-    runFlagWithInput("TAG1_TEST", ctag::TAG);
-    runFlagWithInput("TAG2_TEST", ctag::TAG);
+    runFlagWithInput(unique + "TAG1_TEST", ctag::TAG);
+    runFlagWithInput(unique + "TAG2_TEST", ctag::TAG);
 
     // Show tag test, test different variations
-    BOOST_ASSERT(runFlagWithInput("tAg1_tEst", ctag::SHOW_TAG) == true);
+    BOOST_ASSERT(runFlagWithInput(unique + "tAg1_tEst", ctag::SHOW_TAG) == true);
     BOOST_ASSERT(runFlagWithInput("tEst%", ctag::SHOW_TAG) == false);
     BOOST_ASSERT(runFlagWithInput("%tEst", ctag::SHOW_TAG) == true);
     BOOST_ASSERT(runFlagWithInput("#", ctag::SHOW_TAG) == true);
     BOOST_ASSERT(runFlagWithInput("#", ctag::SHOW_TAG, "wrongPath/") == false);
 
     // Clean up
-    runFlagWithInput("TAG1_TEST", ctag::REMOVE_TAG);
-    runFlagWithInput("TAG2_TEST", ctag::REMOVE_TAG);
+    runFlagWithInput(unique + "TAG1_TEST", ctag::REMOVE_TAG);
+    runFlagWithInput(unique + "TAG2_TEST", ctag::REMOVE_TAG);
 }
 
 /*
@@ -108,24 +116,26 @@ BOOST_AUTO_TEST_CASE( show_tag_test )
  */
 BOOST_AUTO_TEST_CASE( remove_tag_test )
 {
+    // Unique string
+    std::string unique(uniqueStr());
+
     // Print headline
     printHeadline("remove tag test");
 
     // Insert to db tags
-    runFlagWithInput("TAG1_TEST", ctag::TAG);
-    runFlagWithInput("TAG2_TEST", ctag::TAG);
+    runFlagWithInput(unique + "TAG1_TEST", ctag::TAG);
+    runFlagWithInput(unique + "TAG2_TEST", ctag::TAG);
 
     // Test removal
-    BOOST_ASSERT(runFlagWithInput("tAg1_tEst", ctag::REMOVE_TAG) == true);
-    BOOST_ASSERT(runFlagWithInput("tAg1_tEst", ctag::REMOVE_TAG) == false);
+    BOOST_ASSERT(runFlagWithInput(unique + "tAg1_tEst", ctag::REMOVE_TAG) == true);
+    BOOST_ASSERT(runFlagWithInput(unique + "tAg1_tEst", ctag::REMOVE_TAG) == false);
     BOOST_ASSERT(runFlagWithInput("%_tEst", ctag::REMOVE_TAG) == false);
-    BOOST_ASSERT(runFlagWithInput("#", ctag::REMOVE_TAG) == false);
-    BOOST_ASSERT(runFlagWithInput("TAG2_TEST", ctag::REMOVE_TAG, "wrongPath/") == false);
-    BOOST_ASSERT(runFlagWithInput("TAG2_TEST", ctag::REMOVE_TAG) == true);
+    BOOST_ASSERT(runFlagWithInput(unique + "TAG2_TEST", ctag::REMOVE_TAG, "wrongPath/") == false);
+    BOOST_ASSERT(runFlagWithInput(unique + "TAG2_TEST", ctag::REMOVE_TAG) == true);
 
     // Clean up
-    runFlagWithInput("TAG1_TEST", ctag::REMOVE_TAG);
-    runFlagWithInput("TAG2_TEST", ctag::REMOVE_TAG);
+    runFlagWithInput(unique + "TAG1_TEST", ctag::REMOVE_TAG);
+    runFlagWithInput(unique + "TAG2_TEST", ctag::REMOVE_TAG);
 }
 
 

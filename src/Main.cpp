@@ -23,7 +23,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define VERSION "0.1"
+#define VERSION "0.2"
 
 #include <boost/program_options.hpp>
 #include <boost/lexical_cast.hpp>
