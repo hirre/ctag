@@ -1,7 +1,7 @@
 /*
  * CTagTest.cpp
  *
- *  Unit tests for ctag. Assumes database is empty!
+ *  Unit tests for ctag. Uses .ctag database in home folder.
  *
  *  Created on: 11 maj 2013
  *  Author: Hirad Asadi
@@ -49,24 +49,39 @@ BOOST_AUTO_TEST_CASE( tag_test )
     BOOST_ASSERT(runFlagWithInput("TAG_wrong", ctag::TAG, "crazy/path") == false);
 
     std::vector<char> vec = genChars();
+    std::vector<std::string> cleanupVec;
 
     for (unsigned int i = 0; i < vec.size(); i++)
     {
         std::string input(std::string("arg") + vec[i]);
+        bool b = runFlagWithInput(input, ctag::TAG);
 
         // Correct input, try to tag it, expect true result, assert on false
         if (verifyInput(input, REGEX_MAIN))
-            BOOST_ASSERT(runFlagWithInput(input, ctag::TAG) == true);
+        {
+            BOOST_ASSERT(b == true);
+        }
         else
+        {
             // Incorrect input, try to tag it, expect false result, assert on true
-            BOOST_ASSERT(runFlagWithInput(input, ctag::TAG) == false);
+            BOOST_ASSERT(b == false);
+        }
+
+        // Data was written to db, save it for clean up
+        if(b)
+            cleanupVec.push_back(input);
+    }
+
+    // Clean up
+    for (unsigned int i = 0; i < cleanupVec.size(); i++)
+    {
+        runFlagWithInput(cleanupVec[i], ctag::REMOVE_TAG);
     }
 }
 
 /*
  * Show tag test for different inputs.
  */
-
 BOOST_AUTO_TEST_CASE( show_tag_test )
 {
     // Print headline
@@ -82,17 +97,38 @@ BOOST_AUTO_TEST_CASE( show_tag_test )
     BOOST_ASSERT(runFlagWithInput("%tEst", ctag::SHOW_TAG) == true);
     BOOST_ASSERT(runFlagWithInput("#", ctag::SHOW_TAG) == true);
     BOOST_ASSERT(runFlagWithInput("#", ctag::SHOW_TAG, "wrongPath/") == false);
+
+    // Clean up
+    runFlagWithInput("TAG1_TEST", ctag::REMOVE_TAG);
+    runFlagWithInput("TAG2_TEST", ctag::REMOVE_TAG);
 }
 
 /*
  * Remove tag test for different inputs.
  */
-
 BOOST_AUTO_TEST_CASE( remove_tag_test )
 {
     // Print headline
     printHeadline("remove tag test");
+
+    // Insert to db tags
+    runFlagWithInput("TAG1_TEST", ctag::TAG);
+    runFlagWithInput("TAG2_TEST", ctag::TAG);
+
+    // Test removal
+    BOOST_ASSERT(runFlagWithInput("tAg1_tEst", ctag::REMOVE_TAG) == true);
+    BOOST_ASSERT(runFlagWithInput("tAg1_tEst", ctag::REMOVE_TAG) == false);
+    BOOST_ASSERT(runFlagWithInput("%_tEst", ctag::REMOVE_TAG) == false);
+    BOOST_ASSERT(runFlagWithInput("#", ctag::REMOVE_TAG) == false);
+    BOOST_ASSERT(runFlagWithInput("TAG2_TEST", ctag::REMOVE_TAG, "wrongPath/") == false);
+    BOOST_ASSERT(runFlagWithInput("TAG2_TEST", ctag::REMOVE_TAG) == true);
+
+    // Clean up
+    runFlagWithInput("TAG1_TEST", ctag::REMOVE_TAG);
+    runFlagWithInput("TAG2_TEST", ctag::REMOVE_TAG);
 }
+
+
 BOOST_AUTO_TEST_SUITE_END()
 
 }

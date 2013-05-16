@@ -1,7 +1,7 @@
 /*
  * CTagTest.hpp
  *
- *  Unit tests for ctag. Assumes database is empty!
+ *  Unit tests for ctag. Uses .ctag database in home folder.
  *
  *
  *  Created on: 13 maj 2013
@@ -58,7 +58,7 @@ bool runFlagWithInput(const std::string& input, const ctag::Flag& flag,
     // Root path always exists
     inputVec.push_back(path);
     // Print input
-    std::cout << "\n>> Running: \"" << inputVec[0] << " /\" (flag = " << flag
+    std::cout << "\n>> Running: \"" << inputVec[0] << " " << path << "\" (flag = " << flag
             << ")\n" << std::endl;
     // Add test tag
     return handler.processInput(inputVec, flag);
