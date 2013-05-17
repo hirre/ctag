@@ -43,15 +43,15 @@ namespace ctag
 CTagHandler::CTagHandler()
 {
     // Init db to null
-    database = NULL;
+    database_ = NULL;
 
     // Home folder path + database
     std::stringstream ss;
     ss << getHomeFolder() << PATH_SEPARATOR << ".ctag";
-    path = new std::string(ss.str());
+    path_ = new std::string(ss.str());
 
 #ifdef DEBUG
-    debug::dbgPrint("Database: " + *path);
+    debug::dbgPrint("Database: " + *path_);
 #endif
 }
 
@@ -61,11 +61,11 @@ CTagHandler::CTagHandler()
 CTagHandler::~CTagHandler()
 {
     // Close if not closed
-    if (database)
-        sqlite3_close(database);
+    if (database_)
+        sqlite3_close(database_);
 
     // Delete path
-    delete path;
+    delete path_;
 }
 
 /*
@@ -83,7 +83,7 @@ bool CTagHandler::initDB()
     sqlite3_stmt* statement;
 
     // Create table if not exists
-    if (sqlite3_prepare_v2(database, createTableSQL, -1, &statement,
+    if (sqlite3_prepare_v2(database_, createTableSQL, -1, &statement,
             0) != SQLITE_OK)
         return false;
 
@@ -94,7 +94,7 @@ bool CTagHandler::initDB()
     sqlite3_finalize(statement);
 
     // Create index if not exists
-    if (sqlite3_prepare_v2(database, createIndexSQL, -1, &statement,
+    if (sqlite3_prepare_v2(database_, createIndexSQL, -1, &statement,
             0) != SQLITE_OK)
         return false;
 
@@ -110,7 +110,8 @@ bool CTagHandler::initDB()
 /*
  * Method for tagging files/folders. Receives arguments as an input vector.
  */
-bool CTagHandler::tag(const std::vector<std::string>& fVec)
+bool CTagHandler::tag(const std::vector<std::string>& fVec,
+        const std::vector<Flag>& extraFlags)
 {
     // Tag name
     std::string tagName = fVec[0];
@@ -124,7 +125,7 @@ bool CTagHandler::tag(const std::vector<std::string>& fVec)
         return false;
 #else
         // Close db
-        sqlite3_close(database);
+        sqlite3_close(database_);
         exit(1);
 #endif
     }
@@ -149,7 +150,7 @@ bool CTagHandler::tag(const std::vector<std::string>& fVec)
                     << "', datetime('now'));";
 
             // Insert statement
-            if (sqlite3_prepare_v2(database, ss.str().c_str(), -1, &statement,
+            if (sqlite3_prepare_v2(database_, ss.str().c_str(), -1, &statement,
                     0) != SQLITE_OK)
             {
                 std::cerr << "Could not prepare statement [" << ss.str() << "]!"
@@ -177,21 +178,27 @@ bool CTagHandler::tag(const std::vector<std::string>& fVec)
 /*
  * Method to remove tag(s). Receives arguments as an input vector.
  */
-bool CTagHandler::removeTag(const std::vector<std::string>& fVec)
+bool CTagHandler::removeTag(const std::vector<std::string>& fVec,
+        const std::vector<Flag>& extraFlags)
 {
+    // "All" flag set
+    bool all = std::find(extraFlags.begin(), extraFlags.end(), ALL)
+            != extraFlags.end();
+
     // Tag name
-    std::string tagName = fVec[0];
+    std::string tagName = (all) ? "" : fVec[0];
 
     // Verify tag name
-    if (!verifyInput(tagName, REGEX_REMOVE))
+    if (!tagName.empty() && !verifyInput(tagName, REGEX_SHOW_REMOVE))
     {
-        std::cout << "Tag name can only contain numbers, letters and \"_\" and \"#\"."
+        std::cout
+                << "Tag name can only contain numbers, letters and \"_\" and \"#\"."
                 << std::endl;
 #ifdef TEST
         return false;
 #else
         // Close db
-        sqlite3_close(database);
+        sqlite3_close(database_);
         exit(1);
 #endif
     }
@@ -199,8 +206,10 @@ bool CTagHandler::removeTag(const std::vector<std::string>& fVec)
     // Removed rows
     bool removedRows = false;
 
+    unsigned int i = (all) ? 0 : 1;
+
     // Go through path(s)
-    for (unsigned int i = 1; i < fVec.size(); i++)
+    for (; i < fVec.size(); i++)
     {
         // File/folder string
         std::string f = fVec[i];
@@ -216,17 +225,17 @@ bool CTagHandler::removeTag(const std::vector<std::string>& fVec)
             std::stringstream ss;
 
             // Delete all tags
-            if (tagName.compare("#") == 0)
+            if (all)
                 ss << "DELETE FROM tag WHERE path = '"
                         << boost::filesystem::canonical(p).string() << "';";
             else
                 // Delete specific tags from file(s)/folder(s)
-                ss << "DELETE FROM tag WHERE tagname = '" << tagName
+                ss << "DELETE FROM tag WHERE tagname LIKE '" << tagName
                         << "' AND path = '"
                         << boost::filesystem::canonical(p).string() << "';";
 
             // Delete statement
-            if (sqlite3_prepare_v2(database, ss.str().c_str(), -1, &statement,
+            if (sqlite3_prepare_v2(database_, ss.str().c_str(), -1, &statement,
                     0) != SQLITE_OK)
             {
                 std::cerr << "Could not prepare statement [" << ss.str() << "]!"
@@ -238,7 +247,7 @@ bool CTagHandler::removeTag(const std::vector<std::string>& fVec)
                 // Execute
                 sqlite3_step(statement);
 
-                if (sqlite3_changes(database) != 0)
+                if (sqlite3_changes(database_) != 0)
                     removedRows = true;
 
                 // Finalize
@@ -259,14 +268,19 @@ bool CTagHandler::removeTag(const std::vector<std::string>& fVec)
 /*
  * Method to show tag(s). Receives arguments as an input vector.
  */
-bool CTagHandler::showTag(const std::vector<std::string>& fVec)
+bool CTagHandler::showTag(const std::vector<std::string>& fVec,
+        const std::vector<Flag>& extraFlags)
 {
+    // "All" flag set
+    bool all = std::find(extraFlags.begin(), extraFlags.end(), ALL)
+            != extraFlags.end();
+
     // Tag name
-    std::string tagName = fVec[0];
+    std::string tagName = (all) ? "" : fVec[0];
     bool foundTag = false;
 
     // Verify tag name
-    if (!verifyInput(tagName, REGEX_SHOW))
+    if (!tagName.empty() && !verifyInput(tagName, REGEX_SHOW_REMOVE))
     {
         std::cout
                 << "Tag name can only contain numbers, letters, \"#\" (with quotes), \"_\" and % (wildcard) for missing characters."
@@ -275,13 +289,15 @@ bool CTagHandler::showTag(const std::vector<std::string>& fVec)
         return false;
 #else
         // Close db
-        sqlite3_close(database);
+        sqlite3_close(database_);
         exit(1);
 #endif
     }
 
+    unsigned int i = (all) ? 0 : 1;
+
     // Go through path(s)
-    for (unsigned int i = 1; i < fVec.size(); i++)
+    for (; i < fVec.size(); i++)
     {
         // File/folder string
         std::string f = fVec[i];
@@ -296,7 +312,7 @@ bool CTagHandler::showTag(const std::vector<std::string>& fVec)
             std::stringstream ss;
 
             // Select all
-            if (tagName.compare("#") == 0)
+            if (all)
                 ss << "SELECT * FROM tag WHERE path = '"
                         << boost::filesystem::canonical(p).string()
                         << "' ORDER BY dt COLLATE NOCASE DESC";
@@ -308,7 +324,7 @@ bool CTagHandler::showTag(const std::vector<std::string>& fVec)
                         << "' ORDER BY dt COLLATE NOCASE DESC";
 
             // Select statement
-            if (sqlite3_prepare_v2(database, ss.str().c_str(), -1, &statement,
+            if (sqlite3_prepare_v2(database_, ss.str().c_str(), -1, &statement,
                     0) != SQLITE_OK)
             {
                 std::cerr << "Could not prepare statement [" << ss.str() << "]!"
@@ -342,7 +358,7 @@ bool CTagHandler::showTag(const std::vector<std::string>& fVec)
                                 3);
 
                         // Print found tag(s)
-                        if (tagName.compare("#") == 0)
+                        if (all || tagName.find_first_of("%") != std::string::npos)
                             std::cout << "#" << tag << "\t" << pathStr << "\t["
                                     << dt << "]" << std::endl;
                         else
@@ -375,10 +391,10 @@ bool CTagHandler::showTag(const std::vector<std::string>& fVec)
  * Method to process input from the command line. Returns true on success.
  */
 bool CTagHandler::processInput(const std::vector<std::string>& argVec,
-        const Flag& flag)
+        const Flag& flag, const std::vector<Flag>& extraFlags)
 {
     // Check if database can be opened
-    if (sqlite3_open(path->c_str(), &database) != SQLITE_OK)
+    if (sqlite3_open(path_->c_str(), &database_) != SQLITE_OK)
     {
         std::cerr << "Could not connect or create DB in home folder!"
                 << std::endl;
@@ -401,7 +417,7 @@ bool CTagHandler::processInput(const std::vector<std::string>& argVec,
         debug::dbgPrint("PROCESSING: tag");
 #endif
         // Tag
-        if (tag(argVec))
+        if (tag(argVec, extraFlags))
             std::cout << "Tagged!" << std::endl;
         else
             error = true;
@@ -409,9 +425,9 @@ bool CTagHandler::processInput(const std::vector<std::string>& argVec,
 
     case REMOVE_TAG:
 #ifdef DEBUG
-        debug::dbgPrint("PROCESSING: removetag");
+        debug::dbgPrint("PROCESSING: remove tag");
 #endif
-        if (removeTag(argVec))
+        if (removeTag(argVec, extraFlags))
             std::cout << "Removed tag(s)." << std::endl;
         else
         {
@@ -422,21 +438,25 @@ bool CTagHandler::processInput(const std::vector<std::string>& argVec,
 
     case SHOW_TAG:
 #ifdef DEBUG
-        debug::dbgPrint("PROCESSING: showtag");
+        debug::dbgPrint("PROCESSING: show tag");
 #endif
 
         // Show tag
-        if (!showTag(argVec))
+        if (!showTag(argVec, extraFlags))
         {
             std::cerr << "Tag(s) not found." << std::endl;
             error = true;
         }
 
         break;
+
+        // Ignore
+    case ALL:
+        break;
     }
 
     // Close db
-    sqlite3_close(database);
+    sqlite3_close(database_);
 
     return !error;
 }

@@ -9,6 +9,11 @@ ctag [flag] [arguments]
 (Multiple flags can be used)
 
 ### VERSION HISTORY 
+0.21:
+- Some bugs fixed.
+- Menu system updated.
+- Unit tests updated.
+
 0.2:
 - Many bugs fixed.
 - Unit tests added.

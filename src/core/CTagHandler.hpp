@@ -32,10 +32,8 @@
 
 // Allow numbers, letters and "_"
 #define REGEX_TAG "^[a-zA-Z0-9_]*$"
-// Allow numbers, letters, "_", quotes, % and "#"
-#define REGEX_SHOW "^[a-zA-Z0-9_\"#%]*$"
-// Allow numbers, letters, "_", quotes and "#"
-#define REGEX_REMOVE "^[a-zA-Z0-9_\"#]*$"
+// Allow numbers, letters, "_", and %
+#define REGEX_SHOW_REMOVE "^[a-zA-Z0-9_%]*$"
 
 #include <iostream>
 #include <vector>
@@ -53,21 +51,24 @@ public:
     // Destructor
     virtual ~CTagHandler();
     // Method to process cmd line input
-    bool processInput(const std::vector<std::string>& argVec,
-            const Flag& flag);
+    bool processInput(const std::vector<std::string>& argVec, const Flag& flag,
+            const std::vector<Flag>& extraFlags = std::vector<Flag>());
 private:
     // Database
-    sqlite3* database;
+    sqlite3* database_;
     // Path to database
-    std::string * path;
+    std::string * path_;
     // Initialize database
     bool initDB();
     // Tag method
-    bool tag(const std::vector<std::string>& fVec);
+    bool tag(const std::vector<std::string>& fVec,
+            const std::vector<Flag>& extraFlags = std::vector<Flag>());
     // Show tag method
-    bool showTag(const std::vector<std::string>& fVec);
+    bool showTag(const std::vector<std::string>& fVec,
+            const std::vector<Flag>& extraFlags = std::vector<Flag>());
     // Remove tag method
-    bool removeTag(const std::vector<std::string>& fVec);
+    bool removeTag(const std::vector<std::string>& fVec,
+            const std::vector<Flag>& extraFlags = std::vector<Flag>());
 };
 
 } /* namespace ctag */

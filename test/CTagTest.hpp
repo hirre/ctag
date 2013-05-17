@@ -28,18 +28,41 @@
 #define CTAGTEST_HPP_
 
 #include <iostream>
+#include <fstream>
 #include <boost/algorithm/string.hpp>
-#include <boost/date_time.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/lexical_cast.hpp>
 #include "../src/core/CTagHandler.hpp"
 #include "Flags.hpp"
+#include "Helper.hpp"
 
 namespace ctagtest
 {
 
-// Global id
-static long double id = 0;
+// Global test file path
+static std::string* testFilePath;
+
+/*
+ * Init test method.
+ */
+void init()
+{
+    // Create a test file in home folder
+    std::stringstream ss;
+    ss << getHomeFolder() << PATH_SEPARATOR << "tag_test_file.test";
+    testFilePath = new std::string(ss.str());
+    std::ofstream outfile(*testFilePath);
+    outfile << "Tag test file!" << std::endl;
+    outfile.close();
+}
+
+/*
+ * Finish test method.
+ */
+void finish()
+{
+    // Remove test file
+    remove(testFilePath->c_str());
+    delete testFilePath;
+}
 
 /*
  * Print headline.
@@ -56,18 +79,40 @@ static inline void printHeadline(const std::string& h)
  * Return true on success, else false.
  */
 static inline bool runFlagWithInput(const std::string& input,
-        const ctag::Flag& flag, const std::string& path = "/")
+        const ctag::Flag& flag,
+        const std::string& path = std::string(*testFilePath),
+        const std::vector<ctag::Flag>& extraFlags = std::vector<ctag::Flag>())
 {
     ctag::CTagHandler handler;
     std::vector<std::string> inputVec;
-    inputVec.push_back(input);
+
+    if (!input.empty())
+        inputVec.push_back(input);
+
     // Root path always exists
     inputVec.push_back(path);
+
+    // String for extra flags
+    std::stringstream ss;
+    for (unsigned int i = 0; i < extraFlags.size(); i++)
+    {
+        ss << extraFlags[i] << " ";
+    }
+
     // Print input
-    std::cout << "\n>> Running: \"" << inputVec[0] << " " << path
-            << "\" (flag = " << flag << ")\n" << std::endl;
-    // Add test tag
-    return handler.processInput(inputVec, flag);
+    if (!input.empty())
+        std::cout << "\n>> Running: \"" << inputVec[0] << " " << path
+                << "\" (flag = " << flag << ", extra flags = {" << ss.str()
+                << "})\n" << std::endl;
+    else
+        std::cout << "\n>> Running: \" " << path << "\" (flag = " << flag
+                << ", extra flags = {" << ss.str() << "})\n" << std::endl;
+
+    // Process flag with input
+    if (extraFlags.empty())
+        return handler.processInput(inputVec, flag);
+    else // Extra flags added
+        return handler.processInput(inputVec, flag, extraFlags);
 }
 
 /*
@@ -83,20 +128,6 @@ std::vector<char> genChars()
     }
 
     return vec;
-}
-
-/**
- * Returns a unique current time string.
- */
-static inline const std::string uniqueStr()
-{
-    static const char* fmt = "_%Y%m%d%H%M%S_";
-    std::ostringstream ss;
-    ss.imbue(
-            std::locale(std::cout.getloc(),
-                    new boost::posix_time::time_facet(fmt)));
-    ss << id++ << boost::posix_time::second_clock::local_time();
-    return ss.str();
 }
 
 }

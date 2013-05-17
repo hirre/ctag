@@ -32,7 +32,7 @@ namespace ctag
 {
 enum Flag
 {
-    TAG, REMOVE_TAG, SHOW_TAG
+    ALL, TAG, REMOVE_TAG, SHOW_TAG
 };
 }
 
