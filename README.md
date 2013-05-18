@@ -23,6 +23,7 @@ ctag [flag] [arguments]
 - Support for adding, deleting and showing tags.
 
 ### DEPENDENCY
+Needed for compilation:
 - Boost >=1.53.
 - SQLite (Sqlite3.o) >=3.7.16.2 (download [Amalgamation](http://www.sqlite.org/download.html) and compile your own .o-file with e.g. gcc).
 
