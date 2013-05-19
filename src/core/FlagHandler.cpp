@@ -192,7 +192,7 @@ bool FlagHandler::removeTag(const std::vector<std::string>& fVec,
     if (!tagName.empty() && !verifyInput(tagName, REGEX_SHOW_REMOVE))
     {
         std::cout
-                << "Tag name can only contain numbers, letters and \"_\" and \"#\"."
+                << "Tag name can only contain numbers, letters, \"_\" and % (wildcard) for missing characters."
                 << std::endl;
 #ifdef TEST
         return false;
@@ -283,7 +283,7 @@ bool FlagHandler::showTag(const std::vector<std::string>& fVec,
     if (!tagName.empty() && !verifyInput(tagName, REGEX_SHOW_REMOVE))
     {
         std::cout
-                << "Tag name can only contain numbers, letters, \"#\" (with quotes), \"_\" and % (wildcard) for missing characters."
+                << "Tag name can only contain numbers, letters, \"_\" and % (wildcard) for missing characters."
                 << std::endl;
 #ifdef TEST
         return false;
