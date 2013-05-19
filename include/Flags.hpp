@@ -1,7 +1,7 @@
 /*
  *  Flags.h
  *
- *  Flags used by ctag.
+ *  Flags used by maptag.
  *
  *  Created on: 15 maj 2013
  *  Author: Hirad Asadi
@@ -23,12 +23,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FLAGS_H_
-#define FLAGS_H_
+#ifndef FLAGS_HPP_
+#define FLAGS_HPP_
 
 
 // Flags
-namespace ctag
+namespace maptag
 {
 enum Flag
 {
@@ -37,4 +37,4 @@ enum Flag
 }
 
 
-#endif /* FLAGS_H_ */
+#endif /* FLAGS_HPP_ */

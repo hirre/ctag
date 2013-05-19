@@ -1,5 +1,5 @@
 /*
- *  CTagHandler.cpp
+ *  FlagHandler.cpp
  *
  *  Handler class that handles input from the command line.
  *  Handles:
@@ -30,24 +30,24 @@
 #include <stdlib.h>
 #include <sstream>
 #include <boost/filesystem.hpp>
-#include "CTagHandler.hpp"
+#include "FlagHandler.hpp"
 #include "Debug.hpp"
 #include "Helper.hpp"
 
-namespace ctag
+namespace maptag
 {
 
 /*
  * Main constructor.
  */
-CTagHandler::CTagHandler()
+FlagHandler::FlagHandler()
 {
     // Init db to null
     database_ = NULL;
 
     // Home folder path + database
     std::stringstream ss;
-    ss << getHomeFolder() << PATH_SEPARATOR << ".ctag";
+    ss << getHomeFolder() << PATH_SEPARATOR << ".maptag";
     path_ = new std::string(ss.str());
 
 #ifdef DEBUG
@@ -58,7 +58,7 @@ CTagHandler::CTagHandler()
 /*
  * Destructor.
  */
-CTagHandler::~CTagHandler()
+FlagHandler::~FlagHandler()
 {
     // Close if not closed
     if (database_)
@@ -71,7 +71,7 @@ CTagHandler::~CTagHandler()
 /*
  * Initialize the database. Creates the needed tables if they do not exist.
  */
-bool CTagHandler::initDB()
+bool FlagHandler::initDB()
 {
     const char* createTableSQL = "CREATE TABLE IF NOT EXISTS "
             "tag(id INTEGER PRIMARY KEY, tagname TEXT COLLATE NOCASE, "
@@ -110,7 +110,7 @@ bool CTagHandler::initDB()
 /*
  * Method for tagging files/folders. Receives arguments as an input vector.
  */
-bool CTagHandler::tag(const std::vector<std::string>& fVec,
+bool FlagHandler::tag(const std::vector<std::string>& fVec,
         const std::vector<Flag>& extraFlags)
 {
     // Tag name
@@ -178,7 +178,7 @@ bool CTagHandler::tag(const std::vector<std::string>& fVec,
 /*
  * Method to remove tag(s). Receives arguments as an input vector.
  */
-bool CTagHandler::removeTag(const std::vector<std::string>& fVec,
+bool FlagHandler::removeTag(const std::vector<std::string>& fVec,
         const std::vector<Flag>& extraFlags)
 {
     // "All" flag set
@@ -268,7 +268,7 @@ bool CTagHandler::removeTag(const std::vector<std::string>& fVec,
 /*
  * Method to show tag(s). Receives arguments as an input vector.
  */
-bool CTagHandler::showTag(const std::vector<std::string>& fVec,
+bool FlagHandler::showTag(const std::vector<std::string>& fVec,
         const std::vector<Flag>& extraFlags)
 {
     // "All" flag set
@@ -390,7 +390,7 @@ bool CTagHandler::showTag(const std::vector<std::string>& fVec,
 /*
  * Method to process input from the command line. Returns true on success.
  */
-bool CTagHandler::processInput(const std::vector<std::string>& argVec,
+bool FlagHandler::processInput(const std::vector<std::string>& argVec,
         const Flag& flag, const std::vector<Flag>& extraFlags)
 {
     // Check if database can be opened

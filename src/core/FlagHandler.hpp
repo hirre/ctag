@@ -1,5 +1,5 @@
 /*
- *  CTagHandler.hpp
+ *  FlagHandler.hpp
  *
  *  Handler class that handles input from the command line.
  *  Handles:
@@ -27,8 +27,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CTAGHANDLER_HPP_
-#define CTAGHANDLER_HPP_
+#ifndef FLAGHANDLER_HPP_
+#define FLAGHANDLER_HPP_
 
 // Allow numbers, letters and "_"
 #define REGEX_TAG "^[a-zA-Z0-9_]*$"
@@ -40,16 +40,16 @@
 #include "sqlite3.h"
 #include "Flags.hpp"
 
-namespace ctag
+namespace maptag
 {
 
-class CTagHandler
+class FlagHandler
 {
 public:
     // Constructor
-    CTagHandler();
+    FlagHandler();
     // Destructor
-    virtual ~CTagHandler();
+    virtual ~FlagHandler();
     // Method to process cmd line input
     bool processInput(const std::vector<std::string>& argVec, const Flag& flag,
             const std::vector<Flag>& extraFlags = std::vector<Flag>());
@@ -71,5 +71,5 @@ private:
             const std::vector<Flag>& extraFlags = std::vector<Flag>());
 };
 
-} /* namespace ctag */
-#endif /* CTAGHANDLER_HPP_ */
+} /* namespace maptag */
+#endif /* FLAGHANDLER_HPP_ */

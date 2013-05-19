@@ -1,7 +1,7 @@
 /*
- * CTagTest.hpp
+ * MapTagTest.hpp
  *
- *  Unit tests for ctag. Uses .ctag database in home folder.
+ *  Unit tests for maptag. Uses .maptag database in home folder.
  *
  *
  *  Created on: 13 maj 2013
@@ -24,17 +24,17 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CTAGTEST_HPP_
-#define CTAGTEST_HPP_
+#ifndef MAPTAGTEST_HPP_
+#define MAPTAGTEST_HPP_
 
 #include <iostream>
 #include <fstream>
 #include <boost/algorithm/string.hpp>
-#include "../src/core/CTagHandler.hpp"
+#include "../src/core/FlagHandler.hpp"
 #include "Flags.hpp"
 #include "Helper.hpp"
 
-namespace ctagtest
+namespace maptagtest
 {
 
 // Global test file path
@@ -79,11 +79,11 @@ static inline void printHeadline(const std::string& h)
  * Return true on success, else false.
  */
 static inline bool runFlagWithInput(const std::string& input,
-        const ctag::Flag& flag,
+        const maptag::Flag& flag,
         const std::string& path = std::string(*testFilePath),
-        const std::vector<ctag::Flag>& extraFlags = std::vector<ctag::Flag>())
+        const std::vector<maptag::Flag>& extraFlags = std::vector<maptag::Flag>())
 {
-    ctag::CTagHandler handler;
+    maptag::FlagHandler handler;
     std::vector<std::string> inputVec;
 
     if (!input.empty())
@@ -131,4 +131,4 @@ std::vector<char> genChars()
 }
 
 }
-#endif /* CTAGTEST_HPP_ */
+#endif /* MAPTAGTEST_HPP_ */

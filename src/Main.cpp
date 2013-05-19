@@ -1,7 +1,7 @@
 /*
  *  Main.cpp
  *
- *  This is the ctag main program entry point.
+ *  This is the maptag main program entry point.
  *
  *  Created on: 30 apr 2013
  *  Author: Hirad Asadi
@@ -23,14 +23,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define VERSION "0.21"
+#define VERSION "0.22"
 
 #include <boost/program_options.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 #include <iostream>
 #include "Debug.hpp"
-#include "core/CTagHandler.hpp"
+#include "core/FlagHandler.hpp"
 #include "Flags.hpp"
 
 namespace bpo = boost::program_options;
@@ -91,15 +91,15 @@ int main(int argc, char** argv)
         bpo::notify(vm);
 
         // Create handler to handle input
-        ctag::CTagHandler cHandler;
+        maptag::FlagHandler cHandler;
 
         // Extra flags
-        std::vector<ctag::Flag> extraFlags;
+        std::vector<maptag::Flag> extraFlags;
 
         // Manage all flag
         if (vm.count("a"))
         {
-            extraFlags.push_back(ctag::ALL);
+            extraFlags.push_back(maptag::ALL);
         }
 
         // Manage "tag" flag
@@ -112,7 +112,7 @@ int main(int argc, char** argv)
             debug::dbgPrintVector(vm["t"].as<vector<string> >());
 #endif
             if ((argc - 2) >= 2)
-            cHandler.processInput(vm["t"].as<vector<string> >(), ctag::TAG);
+            cHandler.processInput(vm["t"].as<vector<string> >(), maptag::TAG);
             else
             cerr << "Not the right number of arguments for tag flag."
             << std::endl;
@@ -129,7 +129,7 @@ int main(int argc, char** argv)
 #endif
             if ((argc - 2) >= 1)
             cHandler.processInput(vm["r"].as<vector<string> >(),
-                    ctag::REMOVE_TAG, extraFlags);
+                    maptag::REMOVE_TAG, extraFlags);
             else
             cerr << "Not the right number of arguments for remove tag flag."
             << std::endl;
@@ -146,7 +146,7 @@ int main(int argc, char** argv)
 #endif
             if ((argc - 2) >= 1)
             cHandler.processInput(vm["s"].as<vector<string> >(),
-                    ctag::SHOW_TAG, extraFlags);
+                    maptag::SHOW_TAG, extraFlags);
             else
             cerr << "Not the right number of arguments for show tag flag."
             << std::endl;
