@@ -77,6 +77,8 @@ bool FlagHandler::initDB()
             "tag(id INTEGER PRIMARY KEY, tagname TEXT COLLATE NOCASE, "
             "path TEXT COLLATE NOCASE, dt TEXT, UNIQUE(tagname, path));";
 
+    // TODO: create key-value table
+
     const char* createIndexSQL =
             "CREATE INDEX IF NOT EXISTS tag_idx ON tag (tagname, path);";
 
@@ -117,7 +119,7 @@ bool FlagHandler::tag(const std::vector<std::string>& fVec,
     std::string tagName = fVec[0];
 
     // Verify tag name
-    if (!verifyInput(tagName, REGEX_TAG))
+    if (!verifyInput(tagName, REGEX_MAIN))
     {
         std::cout << "Tag name can only contain numbers, letters and \"_\"."
                 << std::endl;
@@ -189,7 +191,7 @@ bool FlagHandler::removeTag(const std::vector<std::string>& fVec,
     std::string tagName = (all) ? "" : fVec[0];
 
     // Verify tag name
-    if (!tagName.empty() && !verifyInput(tagName, REGEX_SHOW_REMOVE))
+    if (!tagName.empty() && !verifyInput(tagName, REGEX_MAIN_ALLOW_PERCENTAGE))
     {
         std::cout
                 << "Tag name can only contain numbers, letters, \"_\" and % (wildcard) for missing characters."
@@ -280,7 +282,7 @@ bool FlagHandler::showTag(const std::vector<std::string>& fVec,
     bool foundTag = false;
 
     // Verify tag name
-    if (!tagName.empty() && !verifyInput(tagName, REGEX_SHOW_REMOVE))
+    if (!tagName.empty() && !verifyInput(tagName, REGEX_MAIN_ALLOW_PERCENTAGE))
     {
         std::cout
                 << "Tag name can only contain numbers, letters, \"_\" and % (wildcard) for missing characters."
@@ -358,7 +360,9 @@ bool FlagHandler::showTag(const std::vector<std::string>& fVec,
                                 3);
 
                         // Print found tag(s)
-                        if (all || tagName.find_first_of("%") != std::string::npos)
+                        if (all
+                                || tagName.find_first_of("%")
+                                        != std::string::npos)
                             std::cout << "#" << tag << "\t" << pathStr << "\t["
                                     << dt << "]" << std::endl;
                         else
@@ -417,9 +421,7 @@ bool FlagHandler::processInput(const std::vector<std::string>& argVec,
         debug::dbgPrint("PROCESSING: tag");
 #endif
         // Tag
-        if (tag(argVec, extraFlags))
-            std::cout << "Tagged!" << std::endl;
-        else
+        if (!tag(argVec, extraFlags))
             error = true;
         break;
 
@@ -427,30 +429,51 @@ bool FlagHandler::processInput(const std::vector<std::string>& argVec,
 #ifdef DEBUG
         debug::dbgPrint("PROCESSING: remove tag");
 #endif
-        if (removeTag(argVec, extraFlags))
-            std::cout << "Removed tag(s)." << std::endl;
-        else
-        {
-            std::cout << "No tag(s) removed." << std::endl;
+        // Remove tag
+        if (!removeTag(argVec, extraFlags))
             error = true;
-        }
+
         break;
 
     case SHOW_TAG:
 #ifdef DEBUG
         debug::dbgPrint("PROCESSING: show tag");
 #endif
-
         // Show tag
         if (!showTag(argVec, extraFlags))
-        {
-            std::cerr << "Tag(s) not found." << std::endl;
             error = true;
-        }
 
         break;
 
+    case WRITE_KEY_VALUE:
+#ifdef DEBUG
+        debug::dbgPrint("PROCESSING: write key-value");
+#endif
+        // Write key-value
+        if (!writeKV(argVec, extraFlags))
+            error = true;
+        break;
+
+    case DELETE_KEY_VALUE:
+#ifdef DEBUG
+        debug::dbgPrint("PROCESSING: delete key-value");
+#endif
+        // Delete key-value
+        if (!deleteKV(argVec, extraFlags))
+            error = true;
+        break;
+
+    case PRINT_KEY_VALUE:
+#ifdef DEBUG
+        debug::dbgPrint("PROCESSING: print key-value");
+#endif
+        // Print key-value
+        if (!printKV(argVec, extraFlags))
+            error = true;
+
+        break;
         // Ignore
+
     case ALL:
         break;
     }
@@ -461,4 +484,33 @@ bool FlagHandler::processInput(const std::vector<std::string>& argVec,
     return !error;
 }
 
-} /* namespace ctag */
+/*
+ * This method writes a key-value to the database associated with file(s)/folder(s).
+ */
+bool FlagHandler::writeKV(const std::vector<std::string>& fVec,
+        const std::vector<Flag>& extraFlags)
+{
+    // TODO: implement writeKV()
+    return true;
+}
+
+/*
+ * This method deletes a key-value in the database associated with file(s)/folder(s).
+ */bool FlagHandler::deleteKV(const std::vector<std::string>& fVec,
+        const std::vector<Flag>& extraFlags)
+{
+    // TODO: implement deleteKV()
+    return true;
+}
+
+/*
+ * This method prints key-values associated with file(s)/folder(s).
+ */
+bool FlagHandler::printKV(const std::vector<std::string>& fVec,
+        const std::vector<Flag>& extraFlags)
+{
+    // TODO: implement printKV()
+    return true;
+}
+
+} /* namespace maptag */

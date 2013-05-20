@@ -50,20 +50,28 @@ int main(int argc, char** argv)
         opts.add_options()("h", "help message")("t",
                 bpo::value<vector<string> >()->multitoken(),
                 "tag arg= <tag-string> <file(s)/folder(s)>, e.g. \"-t helo /test/file7.txt\", or "
-                "\"-t helo /test/*.txt\" for all txt files in a specific folder, or "
-                "\"-t helo /test/\" to tag a specific folder")("r",
+                        "\"-t helo /test/*.txt\" for all txt files in a specific folder, or "
+                        "\"-t helo /test/\" to tag a specific folder")("r",
                 bpo::value<vector<string> >()->multitoken(),
                 "remove tag arg= <tag-string> <file(s)/folder(s)>, e.g. \"-r helo /test/file7.txt\", or "
-                "\"-r helo /test/*.txt\" for all txt files in a specific folder, or "
-                "\"-r helo /test/\" to remove tag for a specific folder, or "
-                "combine tag name with % (wildcard) for missing characters")(
+                        "\"-r helo /test/*.txt\" for all txt files in a specific folder, or "
+                        "\"-r helo /test/\" to remove tag for a specific folder, or "
+                        "combine tag name with % (wildcard) for missing characters")(
                 "s", bpo::value<vector<string> >()->multitoken(),
                 "show tag arg= <tag> <file(s)/folder(s)>, "
-                "e.g. \"-s testtag /usr/lib/*\" shows all files in \"/usr/lib/\" tagged with \"testtag\", or "
-                "combine tag name with % (wildcard) for missing characters")(
-                "v", "version number")("a",
+                        "e.g. \"-s testtag /usr/lib/*\" shows all files in \"/usr/lib/\" tagged with \"testtag\", or "
+                        "combine tag name with % (wildcard) for missing characters")(
+                "w", bpo::value<vector<string> >()->multitoken(),
+                "write arg= <key> <value (with quotes)> <file(s)/folder(s)>")(
+                "d", bpo::value<vector<string> >()->multitoken(),
+                "delete arg= <key> <file(s)/folder(s)>")("p",
+                bpo::value<vector<string> >()->multitoken(),
+                "print arg= <key> <file(s)/folder(s)>")("a",
                 "all flag together with -s to show all tags for specific file(s)/folder(s), or "
-                        "-r to remove all tags for specific file(s)/folder(s)");
+                        "together with -r to remove all tags for specific file(s)/folder(s), or "
+                        "together with -p to print all key-values for specific file(s)/folder(s), or "
+                        "together with -d to delete all key-values for specific file(s)/folder(s)")(
+                "v", "version number");
 
         // Map for storing input
         bpo::variables_map vm;
@@ -72,7 +80,7 @@ int main(int argc, char** argv)
         bpo::store(
                 bpo::command_line_parser(argc, argv).options(opts).style(
                         bpo::command_line_style::default_style
-                        | bpo::command_line_style::allow_long_disguise).run(),
+                                | bpo::command_line_style::allow_long_disguise).run(),
                 vm);
 
         // Manage "help" flag
@@ -108,48 +116,130 @@ int main(int argc, char** argv)
 #ifdef DEBUG
             debug::dbgPrint(
                     "tag | nr of args: "
-                    + boost::lexical_cast<string>(argc - 2));
+                            + boost::lexical_cast<string>(argc - 2));
             debug::dbgPrintVector(vm["t"].as<vector<string> >());
 #endif
             if ((argc - 2) >= 2)
-            cHandler.processInput(vm["t"].as<vector<string> >(), maptag::TAG);
+            {
+                if (cHandler.processInput(vm["t"].as<vector<string> >(),
+                        maptag::TAG))
+                    std::cout << "Tagged!" << std::endl;
+                else
+                    std::cerr << "Could not tag." << std::endl;
+            }
             else
-            cerr << "Not the right number of arguments for tag flag."
-            << std::endl;
+                cerr << "Not the right number of arguments for tag flag."
+                        << std::endl;
         }
 
-        // Manage "removetag" flag
+        // Manage "remove tag" flag
         if (vm.count("r"))
         {
 #ifdef DEBUG
             debug::dbgPrint(
                     "remove tag | nr of args: "
-                    + boost::lexical_cast<string>(argc - 2));
+                            + boost::lexical_cast<string>(argc - 2));
             debug::dbgPrintVector(vm["r"].as<vector<string> >());
 #endif
             if ((argc - 2) >= 1)
-            cHandler.processInput(vm["r"].as<vector<string> >(),
-                    maptag::REMOVE_TAG, extraFlags);
+            {
+                if (cHandler.processInput(vm["r"].as<vector<string> >(),
+                        maptag::REMOVE_TAG, extraFlags))
+                    std::cout << "Removed tag(s)." << std::endl;
+                else
+                    std::cerr << "No tag(s) removed." << std::endl;
+            }
             else
-            cerr << "Not the right number of arguments for remove tag flag."
-            << std::endl;
+                cerr << "Not the right number of arguments for remove tag flag."
+                        << std::endl;
         }
 
-        // Manage "showtag" flag
+        // Manage "show tag" flag
         if (vm.count("s"))
         {
 #ifdef DEBUG
             debug::dbgPrint(
                     "show tag | nr of args: "
-                    + boost::lexical_cast<string>(argc - 2));
+                            + boost::lexical_cast<string>(argc - 2));
             debug::dbgPrintVector(vm["s"].as<vector<string> >());
 #endif
             if ((argc - 2) >= 1)
-            cHandler.processInput(vm["s"].as<vector<string> >(),
-                    maptag::SHOW_TAG, extraFlags);
+            {
+                if (!cHandler.processInput(vm["s"].as<vector<string> >(),
+                        maptag::SHOW_TAG, extraFlags))
+                    std::cerr << "No tag(s) found.";
+            }
             else
-            cerr << "Not the right number of arguments for show tag flag."
-            << std::endl;
+                cerr << "Not the right number of arguments for show tag flag."
+                        << std::endl;
+        }
+
+        // Manage "write key-value" flag
+        if (vm.count("w"))
+        {
+#ifdef DEBUG
+            debug::dbgPrint(
+                    "write key-value | nr of args: "
+                            + boost::lexical_cast<string>(argc - 2));
+            debug::dbgPrintVector(vm["w"].as<vector<string> >());
+#endif
+            if ((argc - 2) >= 2)
+            {
+                if (cHandler.processInput(vm["w"].as<vector<string> >(),
+                        maptag::WRITE_KEY_VALUE, extraFlags))
+                    std::cout << "Wrote key-value!" << std::endl;
+                else
+                    std::cerr << "Could not write key-value!" << std::endl;
+            }
+            else
+                cerr
+                        << "Not the right number of arguments for write key-value flag."
+                        << std::endl;
+        }
+
+        // Manage "delete key-value" flag
+        if (vm.count("d"))
+        {
+#ifdef DEBUG
+            debug::dbgPrint(
+                    "delete key-value | nr of args: "
+                            + boost::lexical_cast<string>(argc - 2));
+            debug::dbgPrintVector(vm["d"].as<vector<string> >());
+#endif
+            if ((argc - 2) >= 1)
+            {
+                if (cHandler.processInput(vm["d"].as<vector<string> >(),
+                        maptag::DELETE_KEY_VALUE, extraFlags))
+                    std::cout << "Deleted key-value(s)." << std::endl;
+                else
+                    std::cerr << "No key-value(s) deleted." << std::endl;
+
+            }
+            else
+                cerr
+                        << "Not the right number of arguments for delete key-value flag."
+                        << std::endl;
+        }
+
+        // Manage "print key-value" flag
+        if (vm.count("p"))
+        {
+#ifdef DEBUG
+            debug::dbgPrint(
+                    "print key-value | nr of args: "
+                            + boost::lexical_cast<string>(argc - 2));
+            debug::dbgPrintVector(vm["p"].as<vector<string> >());
+#endif
+            if ((argc - 2) >= 1)
+            {
+                if (!cHandler.processInput(vm["p"].as<vector<string> >(),
+                        maptag::PRINT_KEY_VALUE, extraFlags))
+                    std::cout << "No key-value(s) found." << std::endl;
+            }
+            else
+                cerr
+                        << "Not the right number of arguments for print key-value flag."
+                        << std::endl;
         }
 
         // Manage "version" flag
@@ -158,8 +248,7 @@ int main(int argc, char** argv)
             std::cout << "Version " + string(VERSION) << std::endl;
         }
 
-    }
-    catch (bpo::error& e)
+    } catch (bpo::error& e)
     {
         // Write error to stderr
         cerr << "Invalid arguments." << std::endl;

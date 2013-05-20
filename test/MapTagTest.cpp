@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE( tag_test )
         bool b = runFlagWithInput(input, maptag::TAG);
 
         // Correct input, try to tag it, expect true result, assert on false
-        if (verifyInput(input, REGEX_TAG))
+        if (verifyInput(input, REGEX_MAIN))
         {
             BOOST_ASSERT(b == true);
         }
@@ -162,6 +162,30 @@ BOOST_AUTO_TEST_CASE( remove_tag_test )
 }
 
 /*
+ * Write key-value test for different inputs.
+ */
+BOOST_AUTO_TEST_CASE( write_kv_test )
+{
+    // TODO: implement write_kv_test
+}
+
+/*
+ * Delete key-value test for different inputs.
+ */
+BOOST_AUTO_TEST_CASE( delete_kv_test )
+{
+    // TODO: implement delete_kv_test
+}
+
+/*
+ * Print key-value test for different inputs.
+ */
+BOOST_AUTO_TEST_CASE( print_kv_test )
+{
+    // TODO: implement print_kv_test
+}
+
+/*
  * Finish test.
  */
 BOOST_AUTO_TEST_CASE( finish_test )
@@ -178,7 +202,7 @@ BOOST_AUTO_TEST_CASE( finish_test )
 
 BOOST_AUTO_TEST_SUITE_END()
 
-}
+} /* namespace maptagtest */
 
 #endif
 

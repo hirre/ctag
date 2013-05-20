@@ -26,15 +26,19 @@
 #ifndef FLAGS_HPP_
 #define FLAGS_HPP_
 
-
 // Flags
 namespace maptag
 {
 enum Flag
 {
-    ALL, TAG, REMOVE_TAG, SHOW_TAG
+    ALL,
+    TAG,
+    REMOVE_TAG,
+    SHOW_TAG,
+    WRITE_KEY_VALUE,
+    DELETE_KEY_VALUE,
+    PRINT_KEY_VALUE
 };
 }
-
 
 #endif /* FLAGS_HPP_ */

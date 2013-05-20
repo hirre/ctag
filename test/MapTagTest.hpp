@@ -130,5 +130,6 @@ std::vector<char> genChars()
     return vec;
 }
 
-}
+} /* namespace maptagtest */
+
 #endif /* MAPTAGTEST_HPP_ */

@@ -3,9 +3,13 @@
  *
  *  Handler class that handles input from the command line.
  *  Handles:
- *      -tag
- *      -removetag
- *      -showtag
+ *      - tag
+ *      - remove tag
+ *      - show tag
+ *      - write (K,V)
+ *      - delete (K, V)
+ *      - print V based on K
+ *
  *
  *  Created on: 5 maj 2013
  *  Author: Hirad Asadi
@@ -31,9 +35,9 @@
 #define FLAGHANDLER_HPP_
 
 // Allow numbers, letters and "_"
-#define REGEX_TAG "^[a-zA-Z0-9_]*$"
+#define REGEX_MAIN "^[a-zA-Z0-9_]*$"
 // Allow numbers, letters, "_", and %
-#define REGEX_SHOW_REMOVE "^[a-zA-Z0-9_%]*$"
+#define REGEX_MAIN_ALLOW_PERCENTAGE "^[a-zA-Z0-9_%]*$"
 
 #include <iostream>
 #include <vector>
@@ -60,14 +64,23 @@ private:
     std::string * path_;
     // Initialize database
     bool initDB();
-    // Tag method
+    // Tag
     bool tag(const std::vector<std::string>& fVec,
             const std::vector<Flag>& extraFlags = std::vector<Flag>());
-    // Show tag method
+    // Show tag
     bool showTag(const std::vector<std::string>& fVec,
             const std::vector<Flag>& extraFlags = std::vector<Flag>());
-    // Remove tag method
+    // Remove tag
     bool removeTag(const std::vector<std::string>& fVec,
+            const std::vector<Flag>& extraFlags = std::vector<Flag>());
+    // Write key-value
+    bool writeKV(const std::vector<std::string>& fVec,
+            const std::vector<Flag>& extraFlags = std::vector<Flag>());
+    // Delete key-value
+    bool deleteKV(const std::vector<std::string>& fVec,
+            const std::vector<Flag>& extraFlags = std::vector<Flag>());
+    // Print key-value
+    bool printKV(const std::vector<std::string>& fVec,
             const std::vector<Flag>& extraFlags = std::vector<Flag>());
 };
 
