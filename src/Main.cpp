@@ -31,7 +31,7 @@
 #include <iostream>
 #include "Debug.hpp"
 #include "core/FlagHandler.hpp"
-#include "Flags.hpp"
+#include "include/Flags.hpp"
 
 namespace bpo = boost::program_options;
 using namespace std;
@@ -42,6 +42,9 @@ using namespace std;
  */
 int main(int argc, char** argv)
 {
+    // Processed ok per default
+    bool processed = true;
+
     try
     {
         // TODO: room for improved command descriptions
@@ -86,29 +89,27 @@ int main(int argc, char** argv)
         // Manage "help" flag
         if (vm.size() == 0 || vm.count("h"))
         {
-            std::stringstream stream;
+            stringstream stream;
             stream << opts;
             string helpMsg = stream.str();
             // Replace "--" with "-"
             boost::algorithm::replace_all(helpMsg, "--", "-");
             cout << helpMsg << endl;
-            return 1;
+            return 0;
         }
 
         // Validate inputs
         bpo::notify(vm);
 
         // Create handler to handle input
-        maptag::FlagHandler cHandler;
+        maptag::FlagHandler fHandler;
 
         // Extra flags
-        std::vector<maptag::Flag> extraFlags;
+        vector<maptag::Flag> extraFlags;
 
         // Manage all flag
         if (vm.count("a"))
-        {
             extraFlags.push_back(maptag::ALL);
-        }
 
         // Manage "tag" flag
         if (vm.count("t"))
@@ -121,15 +122,12 @@ int main(int argc, char** argv)
 #endif
             if ((argc - 2) >= 2)
             {
-                if (cHandler.processInput(vm["t"].as<vector<string> >(),
-                        maptag::TAG))
-                    std::cout << "Tagged!" << std::endl;
-                else
-                    std::cerr << "Could not tag." << std::endl;
+                processed = fHandler.processInput(vm["t"].as<vector<string> >(),
+                        maptag::TAG);
             }
             else
                 cerr << "Not the right number of arguments for tag flag."
-                        << std::endl;
+                        << endl;
         }
 
         // Manage "remove tag" flag
@@ -143,15 +141,12 @@ int main(int argc, char** argv)
 #endif
             if ((argc - 2) >= 1)
             {
-                if (cHandler.processInput(vm["r"].as<vector<string> >(),
-                        maptag::REMOVE_TAG, extraFlags))
-                    std::cout << "Removed tag(s)." << std::endl;
-                else
-                    std::cerr << "No tag(s) removed." << std::endl;
+                processed = fHandler.processInput(vm["r"].as<vector<string> >(),
+                        maptag::REMOVE_TAG, extraFlags);
             }
             else
                 cerr << "Not the right number of arguments for remove tag flag."
-                        << std::endl;
+                        << endl;
         }
 
         // Manage "show tag" flag
@@ -165,13 +160,12 @@ int main(int argc, char** argv)
 #endif
             if ((argc - 2) >= 1)
             {
-                if (!cHandler.processInput(vm["s"].as<vector<string> >(),
-                        maptag::SHOW_TAG, extraFlags))
-                    std::cerr << "No tag(s) found.";
+                processed = fHandler.processInput(vm["s"].as<vector<string> >(),
+                        maptag::SHOW_TAG, extraFlags);
             }
             else
                 cerr << "Not the right number of arguments for show tag flag."
-                        << std::endl;
+                        << endl;
         }
 
         // Manage "write key-value" flag
@@ -185,16 +179,13 @@ int main(int argc, char** argv)
 #endif
             if ((argc - 2) >= 2)
             {
-                if (cHandler.processInput(vm["w"].as<vector<string> >(),
-                        maptag::WRITE_KEY_VALUE, extraFlags))
-                    std::cout << "Wrote key-value!" << std::endl;
-                else
-                    std::cerr << "Could not write key-value!" << std::endl;
+                processed = fHandler.processInput(vm["w"].as<vector<string> >(),
+                        maptag::WRITE_KEY_VALUE, extraFlags);
             }
             else
                 cerr
                         << "Not the right number of arguments for write key-value flag."
-                        << std::endl;
+                        << endl;
         }
 
         // Manage "delete key-value" flag
@@ -208,17 +199,13 @@ int main(int argc, char** argv)
 #endif
             if ((argc - 2) >= 1)
             {
-                if (cHandler.processInput(vm["d"].as<vector<string> >(),
-                        maptag::DELETE_KEY_VALUE, extraFlags))
-                    std::cout << "Deleted key-value(s)." << std::endl;
-                else
-                    std::cerr << "No key-value(s) deleted." << std::endl;
-
+                processed = fHandler.processInput(vm["d"].as<vector<string> >(),
+                        maptag::DELETE_KEY_VALUE, extraFlags);
             }
             else
                 cerr
                         << "Not the right number of arguments for delete key-value flag."
-                        << std::endl;
+                        << endl;
         }
 
         // Manage "print key-value" flag
@@ -232,30 +219,34 @@ int main(int argc, char** argv)
 #endif
             if ((argc - 2) >= 1)
             {
-                if (!cHandler.processInput(vm["p"].as<vector<string> >(),
-                        maptag::PRINT_KEY_VALUE, extraFlags))
-                    std::cout << "No key-value(s) found." << std::endl;
+                processed = fHandler.processInput(vm["p"].as<vector<string> >(),
+                        maptag::PRINT_KEY_VALUE, extraFlags);
             }
             else
                 cerr
                         << "Not the right number of arguments for print key-value flag."
-                        << std::endl;
+                        << endl;
         }
 
         // Manage "version" flag
         if (vm.count("v"))
         {
-            std::cout << "Version " + string(VERSION) << std::endl;
+            cout << "Version " + string(VERSION) << endl;
         }
+
+        // Manage error
+        if (!processed && fHandler.getError().err != maptag::NO_ERROR)
+            cerr << fHandler.getError().msg << ".\t[" << fHandler.getError().err
+                    << "]" << endl;
 
     } catch (bpo::error& e)
     {
         // Write error to stderr
-        cerr << "Invalid arguments." << std::endl;
+        cerr << "Invalid arguments." << endl;
         return 1;
     }
 
-    return 0;
+    return processed;
 }
 
 #endif

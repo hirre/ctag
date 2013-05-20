@@ -31,7 +31,8 @@
 #include <fstream>
 #include <boost/algorithm/string.hpp>
 #include "../src/core/FlagHandler.hpp"
-#include "Flags.hpp"
+#include "../src/include/Flags.hpp"
+
 #include "Helper.hpp"
 
 namespace maptagtest
@@ -81,7 +82,8 @@ static inline void printHeadline(const std::string& h)
 static inline bool runFlagWithInput(const std::string& input,
         const maptag::Flag& flag,
         const std::string& path = std::string(*testFilePath),
-        const std::vector<maptag::Flag>& extraFlags = std::vector<maptag::Flag>())
+        const std::vector<maptag::Flag>& extraFlags =
+                std::vector<maptag::Flag>())
 {
     maptag::FlagHandler handler;
     std::vector<std::string> inputVec;
@@ -108,11 +110,21 @@ static inline bool runFlagWithInput(const std::string& input,
         std::cout << "\n>> Running: \" " << path << "\" (flag = " << flag
                 << ", extra flags = {" << ss.str() << "})\n" << std::endl;
 
+    bool ret = true;
+
     // Process flag with input
     if (extraFlags.empty())
-        return handler.processInput(inputVec, flag);
-    else // Extra flags added
-        return handler.processInput(inputVec, flag, extraFlags);
+        ret = handler.processInput(inputVec, flag);
+    else
+        // Extra flags added
+        ret = handler.processInput(inputVec, flag, extraFlags);
+
+    // Error occurred
+    if (!ret && handler.getError().err != maptag::NO_ERROR)
+        std::cerr << handler.getError().msg << ".\t[" << handler.getError().err
+                << "]" << std::endl;
+
+    return ret;
 }
 
 /*

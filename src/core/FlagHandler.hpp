@@ -42,7 +42,8 @@
 #include <iostream>
 #include <vector>
 #include "sqlite3.h"
-#include "Flags.hpp"
+#include "../include/Flags.hpp"
+#include "../include/Error.hpp"
 
 namespace maptag
 {
@@ -57,11 +58,15 @@ public:
     // Method to process cmd line input
     bool processInput(const std::vector<std::string>& argVec, const Flag& flag,
             const std::vector<Flag>& extraFlags = std::vector<Flag>());
+    // Error method
+    Error getError();
 private:
     // Database
     sqlite3* database_;
     // Path to database
     std::string * path_;
+    // Error struct
+    Error e_;
     // Initialize database
     bool initDB();
     // Tag

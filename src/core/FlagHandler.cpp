@@ -34,6 +34,8 @@
 #include "Debug.hpp"
 #include "Helper.hpp"
 
+using namespace std;
+
 namespace maptag
 {
 
@@ -45,10 +47,14 @@ FlagHandler::FlagHandler()
     // Init db to null
     database_ = NULL;
 
+    // No error per default
+    e_.err = NO_ERROR;
+    e_.msg = "";
+
     // Home folder path + database
-    std::stringstream ss;
+    stringstream ss;
     ss << getHomeFolder() << PATH_SEPARATOR << ".maptag";
-    path_ = new std::string(ss.str());
+    path_ = new string(ss.str());
 
 #ifdef DEBUG
     debug::dbgPrint("Database: " + *path_);
@@ -112,31 +118,25 @@ bool FlagHandler::initDB()
 /*
  * Method for tagging files/folders. Receives arguments as an input vector.
  */
-bool FlagHandler::tag(const std::vector<std::string>& fVec,
-        const std::vector<Flag>& extraFlags)
+bool FlagHandler::tag(const vector<string>& fVec,
+        const vector<Flag>& extraFlags)
 {
     // Tag name
-    std::string tagName = fVec[0];
+    string tagName = fVec[0];
 
     // Verify tag name
     if (!verifyInput(tagName, REGEX_MAIN))
     {
-        std::cout << "Tag name can only contain numbers, letters and \"_\"."
-                << std::endl;
-#ifdef TEST
+        e_.err = VERIFICATION_ERROR;
+        e_.msg = "Tag name can only contain numbers, letters and \"_\"";
         return false;
-#else
-        // Close db
-        sqlite3_close(database_);
-        exit(1);
-#endif
     }
 
     // Go through path(s)
     for (unsigned int i = 1; i < fVec.size(); i++)
     {
         // File/folder string
-        std::string f = fVec[i];
+        string f = fVec[i];
 
         // Path which is to be tagged
         boost::filesystem::path p(f);
@@ -146,7 +146,7 @@ bool FlagHandler::tag(const std::vector<std::string>& fVec,
         {
             sqlite3_stmt* statement;
 
-            std::stringstream ss;
+            stringstream ss;
             ss << "INSERT INTO tag (tagname, path, dt) VALUES('" << tagName
                     << "', '" << boost::filesystem::canonical(p).string()
                     << "', datetime('now'));";
@@ -155,8 +155,9 @@ bool FlagHandler::tag(const std::vector<std::string>& fVec,
             if (sqlite3_prepare_v2(database_, ss.str().c_str(), -1, &statement,
                     0) != SQLITE_OK)
             {
-                std::cerr << "Could not prepare statement [" << ss.str() << "]!"
-                        << std::endl;
+                e_.err = STATEMENT_PREPARATION_ERROR;
+                e_.msg = string("Could not prepare statement [") + ss.str()
+                        + string("]");
                 return false;
             }
 
@@ -168,8 +169,9 @@ bool FlagHandler::tag(const std::vector<std::string>& fVec,
         }
         else
         {
-            std::cerr << "Path (" << p.string() << ") does not exist!"
-                    << std::endl;
+            e_.err = PATH_DOES_NOT_EXIST_ERROR;
+            e_.msg = string("Path (") + p.string()
+                    + string(") does not exist");
             return false;
         }
     } // FOR
@@ -180,29 +182,23 @@ bool FlagHandler::tag(const std::vector<std::string>& fVec,
 /*
  * Method to remove tag(s). Receives arguments as an input vector.
  */
-bool FlagHandler::removeTag(const std::vector<std::string>& fVec,
-        const std::vector<Flag>& extraFlags)
+bool FlagHandler::removeTag(const vector<string>& fVec,
+        const vector<Flag>& extraFlags)
 {
     // "All" flag set
-    bool all = std::find(extraFlags.begin(), extraFlags.end(), ALL)
+    bool all = find(extraFlags.begin(), extraFlags.end(), ALL)
             != extraFlags.end();
 
     // Tag name
-    std::string tagName = (all) ? "" : fVec[0];
+    string tagName = (all) ? "" : fVec[0];
 
     // Verify tag name
     if (!tagName.empty() && !verifyInput(tagName, REGEX_MAIN_ALLOW_PERCENTAGE))
     {
-        std::cout
-                << "Tag name can only contain numbers, letters, \"_\" and % (wildcard) for missing characters."
-                << std::endl;
-#ifdef TEST
+        e_.err = VERIFICATION_ERROR;
+        e_.msg =
+                "Tag name can only contain numbers, letters, \"_\" and % (wildcard) for missing characters";
         return false;
-#else
-        // Close db
-        sqlite3_close(database_);
-        exit(1);
-#endif
     }
 
     // Removed rows
@@ -214,7 +210,7 @@ bool FlagHandler::removeTag(const std::vector<std::string>& fVec,
     for (; i < fVec.size(); i++)
     {
         // File/folder string
-        std::string f = fVec[i];
+        string f = fVec[i];
 
         // Path which is to be tagged
         boost::filesystem::path p(f);
@@ -224,7 +220,7 @@ bool FlagHandler::removeTag(const std::vector<std::string>& fVec,
         {
             sqlite3_stmt* statement;
 
-            std::stringstream ss;
+            stringstream ss;
 
             // Delete all tags
             if (all)
@@ -240,8 +236,9 @@ bool FlagHandler::removeTag(const std::vector<std::string>& fVec,
             if (sqlite3_prepare_v2(database_, ss.str().c_str(), -1, &statement,
                     0) != SQLITE_OK)
             {
-                std::cerr << "Could not prepare statement [" << ss.str() << "]!"
-                        << std::endl;
+                e_.err = STATEMENT_PREPARATION_ERROR;
+                e_.msg = string("Could not prepare statement [") + ss.str()
+                        + string("]");
                 return false;
             }
             else
@@ -258,8 +255,9 @@ bool FlagHandler::removeTag(const std::vector<std::string>& fVec,
         }
         else
         {
-            std::cerr << "Path (" << p.string() << ") does not exist!"
-                    << std::endl;
+            e_.err = PATH_DOES_NOT_EXIST_ERROR;
+            e_.msg = string("Path (") + p.string()
+                    + string(") does not exist");
             return false;
         }
     } // FOR
@@ -270,30 +268,24 @@ bool FlagHandler::removeTag(const std::vector<std::string>& fVec,
 /*
  * Method to show tag(s). Receives arguments as an input vector.
  */
-bool FlagHandler::showTag(const std::vector<std::string>& fVec,
-        const std::vector<Flag>& extraFlags)
+bool FlagHandler::showTag(const vector<string>& fVec,
+        const vector<Flag>& extraFlags)
 {
     // "All" flag set
-    bool all = std::find(extraFlags.begin(), extraFlags.end(), ALL)
+    bool all = find(extraFlags.begin(), extraFlags.end(), ALL)
             != extraFlags.end();
 
     // Tag name
-    std::string tagName = (all) ? "" : fVec[0];
+    string tagName = (all) ? "" : fVec[0];
     bool foundTag = false;
 
     // Verify tag name
     if (!tagName.empty() && !verifyInput(tagName, REGEX_MAIN_ALLOW_PERCENTAGE))
     {
-        std::cout
-                << "Tag name can only contain numbers, letters, \"_\" and % (wildcard) for missing characters."
-                << std::endl;
-#ifdef TEST
+        e_.err = VERIFICATION_ERROR;
+        e_.msg =
+                "Tag name can only contain numbers, letters, \"_\" and % (wildcard) for missing characters";
         return false;
-#else
-        // Close db
-        sqlite3_close(database_);
-        exit(1);
-#endif
     }
 
     unsigned int i = (all) ? 0 : 1;
@@ -302,7 +294,7 @@ bool FlagHandler::showTag(const std::vector<std::string>& fVec,
     for (; i < fVec.size(); i++)
     {
         // File/folder string
-        std::string f = fVec[i];
+        string f = fVec[i];
 
         // Path which is to be shown
         boost::filesystem::path p(f);
@@ -311,7 +303,7 @@ bool FlagHandler::showTag(const std::vector<std::string>& fVec,
         if (boost::filesystem::is_directory(p) || boost::filesystem::exists(p))
         {
             sqlite3_stmt* statement;
-            std::stringstream ss;
+            stringstream ss;
 
             // Select all
             if (all)
@@ -329,8 +321,9 @@ bool FlagHandler::showTag(const std::vector<std::string>& fVec,
             if (sqlite3_prepare_v2(database_, ss.str().c_str(), -1, &statement,
                     0) != SQLITE_OK)
             {
-                std::cerr << "Could not prepare statement [" << ss.str() << "]!"
-                        << std::endl;
+                e_.err = STATEMENT_PREPARATION_ERROR;
+                e_.msg = string("Could not prepare statement [") + ss.str()
+                        + string("]");
                 return false;
             }
             else // OK Select
@@ -348,27 +341,27 @@ bool FlagHandler::showTag(const std::vector<std::string>& fVec,
                         foundTag = true;
 
                         // Tag name
-                        std::string tag = (char*) sqlite3_column_text(statement,
+                        string tag = (char*) sqlite3_column_text(statement,
                                 1);
 
                         // Path
-                        std::string pathStr = (char*) sqlite3_column_text(
+                        string pathStr = (char*) sqlite3_column_text(
                                 statement, 2);
 
                         // Datetime
-                        std::string dt = (char*) sqlite3_column_text(statement,
+                        string dt = (char*) sqlite3_column_text(statement,
                                 3);
 
                         // Print found tag(s)
                         if (all
                                 || tagName.find_first_of("%")
-                                        != std::string::npos)
-                            std::cout << "#" << tag << "\t" << pathStr << "\t["
-                                    << dt << "]" << std::endl;
+                                        != string::npos)
+                            cout << "#" << tag << "\t" << pathStr << "\t["
+                                    << dt << "]" << endl;
                         else
                             // Print path(s) found for specific tag
-                            std::cout << pathStr << "\t[" << dt << "]"
-                                    << std::endl;
+                            cout << pathStr << "\t[" << dt << "]"
+                                    << endl;
                     }
                     else
                     {
@@ -382,8 +375,9 @@ bool FlagHandler::showTag(const std::vector<std::string>& fVec,
         }
         else
         {
-            std::cerr << "Path (" << p.string() << ") does not exist!"
-                    << std::endl;
+            e_.err = PATH_DOES_NOT_EXIST_ERROR;
+            e_.msg = string("Path (") + p.string()
+                    + string(") does not exist");
             return false;
         }
     } // FOR
@@ -394,21 +388,22 @@ bool FlagHandler::showTag(const std::vector<std::string>& fVec,
 /*
  * Method to process input from the command line. Returns true on success.
  */
-bool FlagHandler::processInput(const std::vector<std::string>& argVec,
-        const Flag& flag, const std::vector<Flag>& extraFlags)
+bool FlagHandler::processInput(const vector<string>& argVec,
+        const Flag& flag, const vector<Flag>& extraFlags)
 {
     // Check if database can be opened
     if (sqlite3_open(path_->c_str(), &database_) != SQLITE_OK)
     {
-        std::cerr << "Could not connect or create DB in home folder!"
-                << std::endl;
+        e_.err = DB_CONNECTION_OR_CREATION_ERROR;
+        e_.msg = "Could not connect or create DB in home folder";
         return false;
     }
 
     // Init db
     if (!initDB())
     {
-        std::cerr << "Could not initialize DB!" << std::endl;
+        e_.err = DB_CONNECTION_OR_CREATION_ERROR;
+        e_.msg = "Could not initialize DB";
         return false;
     }
 
@@ -487,8 +482,8 @@ bool FlagHandler::processInput(const std::vector<std::string>& argVec,
 /*
  * This method writes a key-value to the database associated with file(s)/folder(s).
  */
-bool FlagHandler::writeKV(const std::vector<std::string>& fVec,
-        const std::vector<Flag>& extraFlags)
+bool FlagHandler::writeKV(const vector<string>& fVec,
+        const vector<Flag>& extraFlags)
 {
     // TODO: implement writeKV()
     return true;
@@ -496,8 +491,8 @@ bool FlagHandler::writeKV(const std::vector<std::string>& fVec,
 
 /*
  * This method deletes a key-value in the database associated with file(s)/folder(s).
- */bool FlagHandler::deleteKV(const std::vector<std::string>& fVec,
-        const std::vector<Flag>& extraFlags)
+ */bool FlagHandler::deleteKV(const vector<string>& fVec,
+        const vector<Flag>& extraFlags)
 {
     // TODO: implement deleteKV()
     return true;
@@ -506,11 +501,19 @@ bool FlagHandler::writeKV(const std::vector<std::string>& fVec,
 /*
  * This method prints key-values associated with file(s)/folder(s).
  */
-bool FlagHandler::printKV(const std::vector<std::string>& fVec,
-        const std::vector<Flag>& extraFlags)
+bool FlagHandler::printKV(const vector<string>& fVec,
+        const vector<Flag>& extraFlags)
 {
     // TODO: implement printKV()
     return true;
+}
+
+/*
+ * Get error, if an error occurred.
+ */
+Error FlagHandler::getError()
+{
+    return e_;
 }
 
 } /* namespace maptag */
