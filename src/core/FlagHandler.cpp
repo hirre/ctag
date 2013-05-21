@@ -255,7 +255,7 @@ bool FlagHandler::removeTag(const vector<string>& fVec,
         sqlite3_finalize(statement);
 
         return (removedRows) ? true : false;
-    }
+    } // IF NO PATH
 
     unsigned int i = (all) ? 0 : 1;
 
@@ -369,31 +369,19 @@ bool FlagHandler::showTag(const vector<string>& fVec,
             if (result == SQLITE_ROW)
             {
                 foundTag = true;
-
-                // Tag
-                string tag = (char*) sqlite3_column_text(statement, 1);
-
-                // Path
-                string pathStr = (char*) sqlite3_column_text(statement, 2);
-
-                // Datetime
-                string dt = (char*) sqlite3_column_text(statement, 3);
-
-                // Print path(s) found for specific tag
-                cout << "#" << tag << "\t" << pathStr << "\t[" << dt << "]"
-                        << endl;
+                print_tag(statement);
             }
             else
             {
                 break;
             }
-        }
+        } // WHILE
 
         // Finalize
         sqlite3_finalize(statement);
 
         return (!foundTag) ? false : true;
-    }
+    } // IF NO PATH
 
     unsigned int i = (all) ? 0 : 1;
 
@@ -446,19 +434,7 @@ bool FlagHandler::showTag(const vector<string>& fVec,
                 if (result == SQLITE_ROW)
                 {
                     foundTag = true;
-
-                    // Tag name
-                    string tag = (char*) sqlite3_column_text(statement, 1);
-
-                    // Path
-                    string pathStr = (char*) sqlite3_column_text(statement, 2);
-
-                    // Datetime
-                    string dt = (char*) sqlite3_column_text(statement, 3);
-
-                    // Print found tag(s)
-                    cout << "#" << tag << "\t" << pathStr << "\t[" << dt << "]"
-                            << endl;
+                    print_tag(statement);
                 }
                 else
                 {
@@ -656,8 +632,184 @@ bool FlagHandler::writeKV(const vector<string>& fVec,
 bool FlagHandler::printKV(const vector<string>& fVec,
         const vector<Flag>& extraFlags)
 {
-    // TODO: implement printKV()
-    return true;
+    // "All" flag set
+    bool all = find(extraFlags.begin(), extraFlags.end(), ALL)
+            != extraFlags.end();
+
+    bool foundKey = false;
+
+    // Key
+    string key = (all) ? "" : fVec[0];
+
+    // Verify key string
+    if (!verifyInput(key, REGEX_MAIN_ALLOW_PERCENTAGE))
+    {
+        e_.err = VERIFICATION_ERROR;
+        e_.msg = "Key can only contain numbers, letters and \"_\"";
+        return false;
+    }
+
+    // Print key-value with no path
+    if (fVec.size() == 1 && !all)
+    {
+        sqlite3_stmt* statement;
+        stringstream ss;
+
+        ss << "SELECT * FROM key_val WHERE key LIKE '" << key
+                << "' ORDER BY dt COLLATE NOCASE DESC";
+
+        // Prepare statement
+        if (sqlite3_prepare_v2(database_, ss.str().c_str(), -1, &statement,
+                0) != SQLITE_OK)
+        {
+            e_.err = STATEMENT_PREPARATION_ERROR;
+            e_.msg = string("Could not prepare statement [") + ss.str()
+                    + string("]");
+            return false;
+        }
+
+        int result = 0;
+
+        while (true)
+        {
+            // Execute
+            result = sqlite3_step(statement);
+
+            // Found row
+            if (result == SQLITE_ROW)
+            {
+                foundKey = true;
+                print_kv(statement);
+            }
+            else
+            {
+                break;
+            }
+        } // WHILE
+
+        // Finalize
+        sqlite3_finalize(statement);
+
+        return (!foundKey) ? false : true;
+    } // IF NO PATH
+
+    unsigned int i = (all) ? 0 : 1;
+
+    // Print key-value with path(s)
+    // Go through path(s)
+    for (; i < fVec.size(); i++)
+    {
+        // File/folder string
+        string f = fVec[i];
+
+        // Path which is to be printed
+        boost::filesystem::path p(f);
+
+        // Check if path exists
+        if (boost::filesystem::is_directory(p) || boost::filesystem::exists(p))
+        {
+            sqlite3_stmt* statement;
+            stringstream ss;
+
+            // Select all
+            if (all)
+                ss << "SELECT * FROM key_val WHERE path = '"
+                        << boost::filesystem::canonical(p).string()
+                        << "' ORDER BY dt COLLATE NOCASE DESC";
+            else
+                // Select specific key
+                ss << "SELECT * FROM key_val WHERE key LIKE '" << key
+                        << "' AND path = '"
+                        << boost::filesystem::canonical(p).string()
+                        << "' ORDER BY dt COLLATE NOCASE DESC";
+
+            // Prepare statement
+            if (sqlite3_prepare_v2(database_, ss.str().c_str(), -1, &statement,
+                    0) != SQLITE_OK)
+            {
+                e_.err = STATEMENT_PREPARATION_ERROR;
+                e_.msg = string("Could not prepare statement [") + ss.str()
+                        + string("]");
+                return false;
+            }
+
+            int result = 0;
+
+            while (true)
+            {
+                // Execute
+                result = sqlite3_step(statement);
+
+                // Found row
+                if (result == SQLITE_ROW)
+                {
+                    foundKey = true;
+                    print_kv(statement);
+                }
+                else
+                {
+                    break;
+                }
+            } // WHILE
+
+            // Finalize
+            sqlite3_finalize(statement);
+        } // NO PATH
+        else
+        {
+            e_.err = PATH_DOES_NOT_EXIST_ERROR;
+            e_.msg = string("Path (") + p.string() + string(") does not exist");
+            return false;
+        }
+    } // FOR
+
+    return (!foundKey) ? false : true;
+}
+
+/*
+ * This method prints key-values.
+ */
+void FlagHandler::print_kv(sqlite3_stmt* statement)
+{
+    if (statement == NULL)
+        return;
+
+    // Key
+    string keyStr = (char*) sqlite3_column_text(statement, 1);
+
+    // Value
+    string valueStr = (char*) sqlite3_column_text(statement, 2);
+
+    // Path
+    string pathStr = (char*) sqlite3_column_text(statement, 3);
+
+    // Datetime
+    string dt = (char*) sqlite3_column_text(statement, 4);
+
+    // Print path(s) found for specific key
+    cout << "@" << keyStr << "\t\"" << valueStr << "\"\t" << pathStr << "\t["
+            << dt << "]" << endl;
+}
+
+/*
+ * This method prints tags.
+ */
+void FlagHandler::print_tag(sqlite3_stmt* statement)
+{
+    if (statement == NULL)
+        return;
+
+    // Tag
+    string tag = (char*) sqlite3_column_text(statement, 1);
+
+    // Path
+    string pathStr = (char*) sqlite3_column_text(statement, 2);
+
+    // Datetime
+    string dt = (char*) sqlite3_column_text(statement, 3);
+
+    // Print path(s) found for specific tag
+    cout << "#" << tag << "\t" << pathStr << "\t[" << dt << "]" << endl;
 }
 
 /*

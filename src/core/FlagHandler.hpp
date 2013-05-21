@@ -69,6 +69,10 @@ private:
     Error e_;
     // Initialize database
     bool initDB();
+    // Print key-value
+    void print_kv(sqlite3_stmt* statement);
+    // Print tag
+    void print_tag(sqlite3_stmt* statement);
     // Tag
     bool tag(const std::vector<std::string>& fVec,
             const std::vector<Flag>& extraFlags = std::vector<Flag>());
