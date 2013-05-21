@@ -580,7 +580,64 @@ bool FlagHandler::processInput(const vector<string>& argVec, const Flag& flag,
 bool FlagHandler::writeKV(const vector<string>& fVec,
         const vector<Flag>& extraFlags)
 {
-    // TODO: implement writeKV()
+    // Key
+    string key = fVec[0];
+
+    // Value
+    string value = fVec[1];
+
+    // Verify key string
+    if (!verifyInput(key, REGEX_MAIN))
+    {
+        e_.err = VERIFICATION_ERROR;
+        e_.msg = "Key can only contain numbers, letters and \"_\"";
+        return false;
+    }
+
+    // Go through path(s)
+    for (unsigned int i = 2; i < fVec.size(); i++)
+    {
+        // File/folder string
+        string f = fVec[i];
+
+        // Path which is to be associated with key
+        boost::filesystem::path p(f);
+
+        // Check if path exists
+        if (boost::filesystem::is_directory(p) || boost::filesystem::exists(p))
+        {
+            sqlite3_stmt* statement;
+
+            stringstream ss;
+            ss << "INSERT INTO key_val (key, val, path, dt) VALUES('" << key
+                    << "', '" << value << "', '"
+                    << boost::filesystem::canonical(p).string()
+                    << "', datetime('now'));";
+
+            // Prepare statement
+            if (sqlite3_prepare_v2(database_, ss.str().c_str(), -1, &statement,
+                    0) != SQLITE_OK)
+            {
+                e_.err = STATEMENT_PREPARATION_ERROR;
+                e_.msg = string("Could not prepare statement [") + ss.str()
+                        + string("]");
+                return false;
+            }
+
+            // Execute
+            sqlite3_step(statement);
+
+            // Finalize
+            sqlite3_finalize(statement);
+        } // NO PATH
+        else
+        {
+            e_.err = PATH_DOES_NOT_EXIST_ERROR;
+            e_.msg = string("Path (") + p.string() + string(") does not exist");
+            return false;
+        }
+    } // FOR
+
     return true;
 }
 

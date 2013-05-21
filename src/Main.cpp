@@ -175,7 +175,7 @@ int main(int argc, char** argv)
                             + boost::lexical_cast<string>(argc - 2));
             debug::dbgPrintVector(vm["w"].as<vector<string> >());
 #endif
-            if ((argc - 2) >= 2)
+            if ((argc - 2) >= 3)
             {
                 processed = fHandler.processInput(vm["w"].as<vector<string> >(),
                         maptag::WRITE_KEY_VALUE, extraFlags);
