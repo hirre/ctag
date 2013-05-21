@@ -151,7 +151,7 @@ bool FlagHandler::tag(const vector<string>& fVec,
                     << "', '" << boost::filesystem::canonical(p).string()
                     << "', datetime('now'));";
 
-            // Insert statement
+            // Prepare statement
             if (sqlite3_prepare_v2(database_, ss.str().c_str(), -1, &statement,
                     0) != SQLITE_OK)
             {
@@ -166,12 +166,11 @@ bool FlagHandler::tag(const vector<string>& fVec,
 
             // Finalize
             sqlite3_finalize(statement);
-        }
+        } // NO PATH
         else
         {
             e_.err = PATH_DOES_NOT_EXIST_ERROR;
-            e_.msg = string("Path (") + p.string()
-                    + string(") does not exist");
+            e_.msg = string("Path (") + p.string() + string(") does not exist");
             return false;
         }
     } // FOR
@@ -189,6 +188,9 @@ bool FlagHandler::removeTag(const vector<string>& fVec,
     bool all = find(extraFlags.begin(), extraFlags.end(), ALL)
             != extraFlags.end();
 
+    // Removed rows
+    bool removedRows = false;
+
     // Tag name
     string tagName = (all) ? "" : fVec[0];
 
@@ -201,11 +203,39 @@ bool FlagHandler::removeTag(const vector<string>& fVec,
         return false;
     }
 
-    // Removed rows
-    bool removedRows = false;
+    // Remove tag with no path
+    if (fVec.size() == 1 && !all)
+    {
+        sqlite3_stmt* statement;
+        stringstream ss;
+
+        ss << "DELETE FROM tag WHERE tagname LIKE '" << tagName << "'";
+
+        // Prepare statement
+        if (sqlite3_prepare_v2(database_, ss.str().c_str(), -1, &statement,
+                0) != SQLITE_OK)
+        {
+            e_.err = STATEMENT_PREPARATION_ERROR;
+            e_.msg = string("Could not prepare statement [") + ss.str()
+                    + string("]");
+            return false;
+        }
+
+        // Execute
+        sqlite3_step(statement);
+
+        if (sqlite3_changes(database_) != 0)
+            removedRows = true;
+
+        // Finalize
+        sqlite3_finalize(statement);
+
+        return (removedRows) ? true : false;
+    }
 
     unsigned int i = (all) ? 0 : 1;
 
+    // Remove tags with paths
     // Go through path(s)
     for (; i < fVec.size(); i++)
     {
@@ -232,7 +262,7 @@ bool FlagHandler::removeTag(const vector<string>& fVec,
                         << "' AND path = '"
                         << boost::filesystem::canonical(p).string() << "';";
 
-            // Delete statement
+            // Prepare statement
             if (sqlite3_prepare_v2(database_, ss.str().c_str(), -1, &statement,
                     0) != SQLITE_OK)
             {
@@ -241,23 +271,20 @@ bool FlagHandler::removeTag(const vector<string>& fVec,
                         + string("]");
                 return false;
             }
-            else
-            {
-                // Execute
-                sqlite3_step(statement);
 
-                if (sqlite3_changes(database_) != 0)
-                    removedRows = true;
+            // Execute
+            sqlite3_step(statement);
 
-                // Finalize
-                sqlite3_finalize(statement);
-            }
-        }
+            if (sqlite3_changes(database_) != 0)
+                removedRows = true;
+
+            // Finalize
+            sqlite3_finalize(statement);
+        } // NO PATH
         else
         {
             e_.err = PATH_DOES_NOT_EXIST_ERROR;
-            e_.msg = string("Path (") + p.string()
-                    + string(") does not exist");
+            e_.msg = string("Path (") + p.string() + string(") does not exist");
             return false;
         }
     } // FOR
@@ -288,8 +315,65 @@ bool FlagHandler::showTag(const vector<string>& fVec,
         return false;
     }
 
+    // Show tag with no path
+    if (fVec.size() == 1 && !all)
+    {
+        sqlite3_stmt* statement;
+        stringstream ss;
+
+        ss << "SELECT * FROM tag WHERE tagname LIKE '" << tagName
+                << "' ORDER BY dt COLLATE NOCASE DESC";
+
+        // Prepare statement
+        if (sqlite3_prepare_v2(database_, ss.str().c_str(), -1, &statement,
+                0) != SQLITE_OK)
+        {
+            e_.err = STATEMENT_PREPARATION_ERROR;
+            e_.msg = string("Could not prepare statement [") + ss.str()
+                    + string("]");
+            return false;
+        }
+
+        int result = 0;
+
+        while (true)
+        {
+            // Execute
+            result = sqlite3_step(statement);
+
+            // Found row
+            if (result == SQLITE_ROW)
+            {
+                foundTag = true;
+
+                // Tag
+                string tag = (char*) sqlite3_column_text(statement, 1);
+
+                // Path
+                string pathStr = (char*) sqlite3_column_text(statement, 2);
+
+                // Datetime
+                string dt = (char*) sqlite3_column_text(statement, 3);
+
+                // Print path(s) found for specific tag
+                cout << "#" << tag << "\t" << pathStr << "\t[" << dt << "]"
+                        << endl;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        // Finalize
+        sqlite3_finalize(statement);
+
+        return (!foundTag) ? false : true;
+    }
+
     unsigned int i = (all) ? 0 : 1;
 
+    // Show tag with path(s)
     // Go through path(s)
     for (; i < fVec.size(); i++)
     {
@@ -317,7 +401,7 @@ bool FlagHandler::showTag(const vector<string>& fVec,
                         << boost::filesystem::canonical(p).string()
                         << "' ORDER BY dt COLLATE NOCASE DESC";
 
-            // Select statement
+            // Prepare statement
             if (sqlite3_prepare_v2(database_, ss.str().c_str(), -1, &statement,
                     0) != SQLITE_OK)
             {
@@ -326,58 +410,45 @@ bool FlagHandler::showTag(const vector<string>& fVec,
                         + string("]");
                 return false;
             }
-            else // OK Select
+
+            int result = 0;
+
+            while (true)
             {
-                int result = 0;
+                // Execute
+                result = sqlite3_step(statement);
 
-                while (true)
+                // Found row
+                if (result == SQLITE_ROW)
                 {
-                    // Execute
-                    result = sqlite3_step(statement);
+                    foundTag = true;
 
-                    // Found row
-                    if (result == SQLITE_ROW)
-                    {
-                        foundTag = true;
+                    // Tag name
+                    string tag = (char*) sqlite3_column_text(statement, 1);
 
-                        // Tag name
-                        string tag = (char*) sqlite3_column_text(statement,
-                                1);
+                    // Path
+                    string pathStr = (char*) sqlite3_column_text(statement, 2);
 
-                        // Path
-                        string pathStr = (char*) sqlite3_column_text(
-                                statement, 2);
+                    // Datetime
+                    string dt = (char*) sqlite3_column_text(statement, 3);
 
-                        // Datetime
-                        string dt = (char*) sqlite3_column_text(statement,
-                                3);
-
-                        // Print found tag(s)
-                        if (all
-                                || tagName.find_first_of("%")
-                                        != string::npos)
-                            cout << "#" << tag << "\t" << pathStr << "\t["
-                                    << dt << "]" << endl;
-                        else
-                            // Print path(s) found for specific tag
-                            cout << pathStr << "\t[" << dt << "]"
-                                    << endl;
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    // Print found tag(s)
+                    cout << "#" << tag << "\t" << pathStr << "\t[" << dt << "]"
+                            << endl;
                 }
+                else
+                {
+                    break;
+                }
+            } // WHILE
 
-                // Finalize
-                sqlite3_finalize(statement);
-            }
-        }
+            // Finalize
+            sqlite3_finalize(statement);
+        } // NO PATH
         else
         {
             e_.err = PATH_DOES_NOT_EXIST_ERROR;
-            e_.msg = string("Path (") + p.string()
-                    + string(") does not exist");
+            e_.msg = string("Path (") + p.string() + string(") does not exist");
             return false;
         }
     } // FOR
@@ -388,8 +459,8 @@ bool FlagHandler::showTag(const vector<string>& fVec,
 /*
  * Method to process input from the command line. Returns true on success.
  */
-bool FlagHandler::processInput(const vector<string>& argVec,
-        const Flag& flag, const vector<Flag>& extraFlags)
+bool FlagHandler::processInput(const vector<string>& argVec, const Flag& flag,
+        const vector<Flag>& extraFlags)
 {
     // Check if database can be opened
     if (sqlite3_open(path_->c_str(), &database_) != SQLITE_OK)

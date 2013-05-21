@@ -114,13 +114,15 @@ BOOST_AUTO_TEST_CASE( show_tag_test )
     BOOST_ASSERT(runFlagWithInput("test%", maptag::SHOW_TAG) == false);
     BOOST_ASSERT(runFlagWithInput("%tEst", maptag::SHOW_TAG) == true);
     BOOST_ASSERT(runFlagWithInput("", maptag::SHOW_TAG) == false);
-    // Show all
+    // Show all for
     BOOST_ASSERT(
             runFlagWithInput("", maptag::SHOW_TAG, "wrongPath/",
                     std::vector<maptag::Flag>(1, maptag::ALL)) == false);
     BOOST_ASSERT(
                 runFlagWithInput("", maptag::SHOW_TAG, *testFilePath,
                         std::vector<maptag::Flag>(1, maptag::ALL)) == true);
+
+    BOOST_ASSERT(runFlagWithInput("%test", maptag::SHOW_TAG, "") == true);
 
     // Clean up
     runFlagWithInput("TAG1_TEST", maptag::REMOVE_TAG);
@@ -151,6 +153,8 @@ BOOST_AUTO_TEST_CASE( remove_tag_test )
                     "wrongPath/") == false);
     BOOST_ASSERT(
             runFlagWithInput("TAG2_TEST", maptag::REMOVE_TAG) == true);
+
+    BOOST_ASSERT(runFlagWithInput("%3_test", maptag::REMOVE_TAG, "") == true);
 
     // Clean up
     runFlagWithInput("TAG1_TEST", maptag::REMOVE_TAG);

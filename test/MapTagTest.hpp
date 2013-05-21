@@ -91,8 +91,8 @@ static inline bool runFlagWithInput(const std::string& input,
     if (!input.empty())
         inputVec.push_back(input);
 
-    // Root path always exists
-    inputVec.push_back(path);
+    if (!path.empty())
+        inputVec.push_back(path);
 
     // String for extra flags
     std::stringstream ss;

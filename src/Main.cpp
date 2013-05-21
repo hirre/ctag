@@ -52,29 +52,27 @@ int main(int argc, char** argv)
         bpo::options_description opts("Usage");
         opts.add_options()("h", "help message")("t",
                 bpo::value<vector<string> >()->multitoken(),
-                "tag arg= <tag-string> <file(s)/folder(s)>, e.g. \"-t helo /test/file7.txt\", or "
-                        "\"-t helo /test/*.txt\" for all txt files in a specific folder, or "
-                        "\"-t helo /test/\" to tag a specific folder")("r",
+                "tag, [<tag> <file/folder> ...]")("r",
                 bpo::value<vector<string> >()->multitoken(),
-                "remove tag arg= <tag-string> <file(s)/folder(s)>, e.g. \"-r helo /test/file7.txt\", or "
-                        "\"-r helo /test/*.txt\" for all txt files in a specific folder, or "
-                        "\"-r helo /test/\" to remove tag for a specific folder, or "
-                        "combine tag name with % (wildcard) for missing characters")(
-                "s", bpo::value<vector<string> >()->multitoken(),
-                "show tag arg= <tag> <file(s)/folder(s)>, "
-                        "e.g. \"-s testtag /usr/lib/*\" shows all files in \"/usr/lib/\" tagged with \"testtag\", or "
-                        "combine tag name with % (wildcard) for missing characters")(
-                "w", bpo::value<vector<string> >()->multitoken(),
-                "write arg= <key> <value (with quotes)> <file(s)/folder(s)>")(
+                "remove tag, [<tag> opt=[<file/folder> ...]], "
+                        "% allowed in tag name for missing characters")("s",
+                bpo::value<vector<string> >()->multitoken(),
+                "show tag, [<tag> opt=[<file/folder> ...]], "
+                        "% allowed in tag name for missing characters")("w",
+                bpo::value<vector<string> >()->multitoken(),
+                "write key-value, [<key> <value (with quotes)> <file/folder> ...]")(
                 "d", bpo::value<vector<string> >()->multitoken(),
-                "delete arg= <key> <file(s)/folder(s)>")("p",
+                "delete key-value, [<key> opt=[<file/folder> ...]], "
+                        "% allowed in tag name for missing characters")("p",
                 bpo::value<vector<string> >()->multitoken(),
-                "print arg= <key> <file(s)/folder(s)>")("a",
-                "all flag together with -s to show all tags for specific file(s)/folder(s), or "
-                        "together with -r to remove all tags for specific file(s)/folder(s), or "
-                        "together with -p to print all key-values for specific file(s)/folder(s), or "
-                        "together with -d to delete all key-values for specific file(s)/folder(s)")(
-                "v", "version number");
+                "print key-value, [<key> optional=[<file/folder> ...]], "
+                        "% allowed in tag name for missing characters")("a",
+                "all flag, for specific file(s)/folder(s), "
+                        "together with -s to show all tags, or "
+                        "together with -r to remove all tags, or "
+                        "together with -p to print all key-values, or "
+                        "together with -d to delete all key-values")("v",
+                "version number");
 
         // Map for storing input
         bpo::variables_map vm;
