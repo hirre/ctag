@@ -227,6 +227,12 @@ bool FlagHandler::removeTag(const vector<string>& fVec,
         return false;
     }
 
+#ifndef TEST
+    // Safety question
+    if (!q())
+        return false;
+#endif
+
     // Remove tag with no path
     if (fVec.size() == 1 && !all)
     {
@@ -640,6 +646,12 @@ bool FlagHandler::writeKV(const vector<string>& fVec,
         return false;
     }
 
+#ifndef TEST
+    // Safety question
+    if (!q())
+        return false;
+#endif
+
     // Remove key with no path
     if (fVec.size() == 1 && !all)
     {
@@ -913,6 +925,21 @@ void FlagHandler::print_tag(sqlite3_stmt* statement)
 
     // Print path(s) found for specific tag
     cout << "#" << tag << "\t" << pathStr << "\t[" << dt << "]" << endl;
+}
+
+/*
+ * Prints question.
+ */
+bool FlagHandler::q()
+{
+    char yn;
+    cout << "Are you sure (y/n)? ";
+    cin >> yn;
+
+    if (tolower(yn) != 'y')
+        return false;
+
+    return true;
 }
 
 /*

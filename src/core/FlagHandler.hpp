@@ -74,6 +74,9 @@ private:
     // Error struct
     Error e_;
 
+    // Print question
+    bool q();
+
     // Initialize database
     bool initDB();
 
