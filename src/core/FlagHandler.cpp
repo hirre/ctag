@@ -80,17 +80,28 @@ FlagHandler::~FlagHandler()
 bool FlagHandler::initDB()
 {
     const char* createTableSQL = "CREATE TABLE IF NOT EXISTS "
-            "tag(id INTEGER PRIMARY KEY, tagname TEXT COLLATE NOCASE, "
-            "path TEXT COLLATE NOCASE, dt TEXT, UNIQUE(tagname, path));";
+            "tag(id INTEGER PRIMARY KEY, "
+            "tagname TEXT COLLATE NOCASE, "
+            "path TEXT COLLATE NOCASE, "
+            "dt TEXT, "
+            "UNIQUE(tagname, path));";
 
-    // TODO: create key-value table
+    const char* createKVTableSQL = "CREATE TABLE IF NOT EXISTS "
+            "key_val(id INTEGER PRIMARY KEY, "
+            "key TEXT COLLATE NOCASE, "
+            "val TEXT COLLATE NOCASE, "
+            "path TEXT COLLATE NOCASE, "
+            "dt TEXT, UNIQUE(key, path));";
 
     const char* createIndexSQL =
             "CREATE INDEX IF NOT EXISTS tag_idx ON tag (tagname, path);";
 
+    const char* createKVIndexSQL =
+            "CREATE INDEX IF NOT EXISTS key_val_idx ON key_val (key, path);";
+
     sqlite3_stmt* statement;
 
-    // Create table if not exists
+    // Prepare to create table tag if not exists
     if (sqlite3_prepare_v2(database_, createTableSQL, -1, &statement,
             0) != SQLITE_OK)
         return false;
@@ -98,11 +109,24 @@ bool FlagHandler::initDB()
     // Execute
     sqlite3_step(statement);
 
-    // Finalize
-    sqlite3_finalize(statement);
+    // Prepare to create table key_val if not exists
+    if (sqlite3_prepare_v2(database_, createKVTableSQL, -1, &statement,
+            0) != SQLITE_OK)
+        return false;
 
-    // Create index if not exists
+    // Execute
+    sqlite3_step(statement);
+
+    // Prepare to create index tag if not exists
     if (sqlite3_prepare_v2(database_, createIndexSQL, -1, &statement,
+            0) != SQLITE_OK)
+        return false;
+
+    // Execute
+    sqlite3_step(statement);
+
+    // Prepare to create index key_val if not exists
+    if (sqlite3_prepare_v2(database_, createKVIndexSQL, -1, &statement,
             0) != SQLITE_OK)
         return false;
 
