@@ -266,7 +266,7 @@ bool FlagHandler::removeTag(const vector<string>& fVec,
         // File/folder string
         string f = fVec[i];
 
-        // Path which is to be tagged
+        // Path which is to be removed
         boost::filesystem::path p(f);
 
         // Check if path exists
@@ -622,8 +622,111 @@ bool FlagHandler::writeKV(const vector<string>& fVec,
  */bool FlagHandler::deleteKV(const vector<string>& fVec,
         const vector<Flag>& extraFlags)
 {
-    // TODO: implement deleteKV()
-    return true;
+    // "All" flag set
+    bool all = find(extraFlags.begin(), extraFlags.end(), ALL)
+            != extraFlags.end();
+
+    // Removed rows
+    bool removedRows = false;
+
+    // Key
+    string key = (all) ? "" : fVec[0];
+
+    // Verify key string
+    if (!verifyInput(key, REGEX_MAIN_ALLOW_PERCENTAGE))
+    {
+        e_.err = VERIFICATION_ERROR;
+        e_.msg = "Key can only contain numbers, letters and \"_\"";
+        return false;
+    }
+
+    // Remove key with no path
+    if (fVec.size() == 1 && !all)
+    {
+        sqlite3_stmt* statement;
+        stringstream ss;
+
+        ss << "DELETE FROM key_val WHERE key LIKE '" << key << "'";
+
+        // Prepare statement
+        if (sqlite3_prepare_v2(database_, ss.str().c_str(), -1, &statement,
+                0) != SQLITE_OK)
+        {
+            e_.err = STATEMENT_PREPARATION_ERROR;
+            e_.msg = string("Could not prepare statement [") + ss.str()
+                    + string("]");
+            return false;
+        }
+
+        // Execute
+        sqlite3_step(statement);
+
+        if (sqlite3_changes(database_) != 0)
+            removedRows = true;
+
+        // Finalize
+        sqlite3_finalize(statement);
+
+        return (removedRows) ? true : false;
+    } // IF NO PATH
+
+    unsigned int i = (all) ? 0 : 1;
+
+    // Remove keys with paths
+    // Go through path(s)
+    for (; i < fVec.size(); i++)
+    {
+        // File/folder string
+        string f = fVec[i];
+
+        // Path which is to be removed
+        boost::filesystem::path p(f);
+
+        // Check if path exists
+        if (boost::filesystem::is_directory(p) || boost::filesystem::exists(p))
+        {
+            sqlite3_stmt* statement;
+
+            stringstream ss;
+
+            // Delete all keys
+            if (all)
+                ss << "DELETE FROM key_val WHERE path = '"
+                        << boost::filesystem::canonical(p).string() << "';";
+            else
+                // Delete specific tags from file(s)/folder(s)
+                ss << "DELETE FROM key_val WHERE key LIKE '" << key
+                        << "' AND path = '"
+                        << boost::filesystem::canonical(p).string() << "';";
+
+            // Prepare statement
+            if (sqlite3_prepare_v2(database_, ss.str().c_str(), -1, &statement,
+                    0) != SQLITE_OK)
+            {
+                e_.err = STATEMENT_PREPARATION_ERROR;
+                e_.msg = string("Could not prepare statement [") + ss.str()
+                        + string("]");
+                return false;
+            }
+
+            // Execute
+            sqlite3_step(statement);
+
+            if (sqlite3_changes(database_) != 0)
+                removedRows = true;
+
+            // Finalize
+            sqlite3_finalize(statement);
+        } // NO PATH
+        else
+        {
+            e_.err = PATH_DOES_NOT_EXIST_ERROR;
+            e_.msg = string("Path (") + p.string() + string(") does not exist");
+            return false;
+        }
+    } // FOR
+
+    return (removedRows) ? true : false;
 }
 
 /*
