@@ -42,10 +42,6 @@ Thumbs.db
 lib/
 Debug/
 DebugWin/
-Release/
-ReleaseWin/
 .settings/
 /DebugMac
-/ReleaseMac
-/TestMac
 script/
