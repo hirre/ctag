@@ -39,7 +39,7 @@ Needed for compilation:
 ### COMPILATION
 - Makefile in "Release*" & "Test*" folder.
 
-- Manual compilation example (OS X 10.8.3, g++ >=4.7):
+Manual compilation example (OS X 10.8.3, g++ >=4.7):
 
     g++ -I/usr/local/lib/boost_1_53_0/ -I"/Users/hirre/dev/maptag/include" -O3 -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"test/MapTagTest.d" -MT"test/MapTagTest.d" -o "test/MapTagTest.o" "../test/MapTagTest.cpp"
  
