@@ -3,7 +3,6 @@
 *.com
 *.class
 *.dll
-*.exe
 *.o
 *.so
 
@@ -45,3 +44,4 @@ DebugWin/
 .settings/
 /DebugMac
 script/
+/TestMac
