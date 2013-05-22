@@ -37,7 +37,7 @@ Needed for compilation:
 - SQLite (Sqlite3.o) >=3.7.16.2 (download [Amalgamation](http://www.sqlite.org/download.html) and compile your own .o-file with e.g. gcc).
 
 ### COMPILATION
-- Makefile in "Release*" & "Test*" folder.
+- Makefile in "Release*" & "Test*" folder (paths must be changed to comply with your system).
 
 Manual compilation example (OS X 10.8.3, g++ >=4.7):
 
