@@ -3,12 +3,9 @@
  *
  *  Handler class that handles input from the command line.
  *  Handles:
- *      - tag
- *      - remove tag
- *      - show tag
  *      - write (K,V)
- *      - delete (K, V)
- *      - print V based on K
+ *      - delete (K,V)
+ *      - print (K,V)
  *
  *
  *  Created on: 5 maj 2013
@@ -82,21 +79,6 @@ private:
 
     // Print key-value
     void print_kv(sqlite3_stmt* statement);
-
-    // Print tag
-    void print_tag(sqlite3_stmt* statement);
-
-    // Tag
-    bool tag(const std::vector<std::string>& fVec,
-            const std::vector<Flag>& extraFlags = std::vector<Flag>());
-
-    // Show tag
-    bool showTag(const std::vector<std::string>& fVec,
-            const std::vector<Flag>& extraFlags = std::vector<Flag>());
-
-    // Remove tag
-    bool removeTag(const std::vector<std::string>& fVec,
-            const std::vector<Flag>& extraFlags = std::vector<Flag>());
 
     // Write key-value
     bool writeKV(const std::vector<std::string>& fVec,

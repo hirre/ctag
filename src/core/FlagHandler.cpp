@@ -3,9 +3,9 @@
  *
  *  Handler class that handles input from the command line.
  *  Handles:
- *      -tag
- *      -removetag
- *      -showtag
+ *      - write (K,V)
+ *      - delete (K,V)
+ *      - print (K,V)
  *
  *  Created on: 5 maj 2013
  *  Author: Hirad Asadi
@@ -80,13 +80,6 @@ FlagHandler::~FlagHandler()
 bool FlagHandler::initDB()
 {
     const char* createTableSQL = "CREATE TABLE IF NOT EXISTS "
-            "tag(id INTEGER PRIMARY KEY, "
-            "tagname TEXT COLLATE NOCASE, "
-            "path TEXT COLLATE NOCASE, "
-            "dt TEXT, "
-            "UNIQUE(tagname, path));";
-
-    const char* createKVTableSQL = "CREATE TABLE IF NOT EXISTS "
             "key_val(id INTEGER PRIMARY KEY, "
             "key TEXT COLLATE NOCASE, "
             "val TEXT COLLATE NOCASE, "
@@ -94,23 +87,12 @@ bool FlagHandler::initDB()
             "dt TEXT, UNIQUE(key, path));";
 
     const char* createIndexSQL =
-            "CREATE INDEX IF NOT EXISTS tag_idx ON tag (tagname, path);";
-
-    const char* createKVIndexSQL =
             "CREATE INDEX IF NOT EXISTS key_val_idx ON key_val (key, path);";
 
     sqlite3_stmt* statement;
 
     // Prepare to create table tag if not exists
     if (sqlite3_prepare_v2(database_, createTableSQL, -1, &statement,
-            0) != SQLITE_OK)
-        return false;
-
-    // Execute
-    sqlite3_step(statement);
-
-    // Prepare to create table key_val if not exists
-    if (sqlite3_prepare_v2(database_, createKVTableSQL, -1, &statement,
             0) != SQLITE_OK)
         return false;
 
@@ -125,341 +107,10 @@ bool FlagHandler::initDB()
     // Execute
     sqlite3_step(statement);
 
-    // Prepare to create index key_val if not exists
-    if (sqlite3_prepare_v2(database_, createKVIndexSQL, -1, &statement,
-            0) != SQLITE_OK)
-        return false;
-
-    // Execute
-    sqlite3_step(statement);
-
     // Finalize
     sqlite3_finalize(statement);
 
     return true;
-}
-
-/*
- * Method for tagging files/folders. Receives arguments as an input vector.
- */
-bool FlagHandler::tag(const vector<string>& fVec,
-        const vector<Flag>& extraFlags)
-{
-    // Tag name
-    string tagName = fVec[0];
-
-    // Verify tag name
-    if (!verifyInput(tagName, REGEX_MAIN))
-    {
-        e_.err = VERIFICATION_ERROR;
-        e_.msg = "Tag name can only contain numbers, letters and \"_\"";
-        return false;
-    }
-
-    // Go through path(s)
-    for (unsigned int i = 1; i < fVec.size(); i++)
-    {
-        // File/folder string
-        string f = fVec[i];
-
-        // Path which is to be tagged
-        boost::filesystem::path p(f);
-
-        // Check if path exists
-        if (boost::filesystem::is_directory(p) || boost::filesystem::exists(p))
-        {
-            sqlite3_stmt* statement;
-
-            stringstream ss;
-            ss << "INSERT INTO tag (tagname, path, dt) VALUES('" << tagName
-                    << "', '" << boost::filesystem::canonical(p).string()
-                    << "', datetime('now'));";
-
-            // Prepare statement
-            if (sqlite3_prepare_v2(database_, ss.str().c_str(), -1, &statement,
-                    0) != SQLITE_OK)
-            {
-                e_.err = STATEMENT_PREPARATION_ERROR;
-                e_.msg = string("Could not prepare statement [") + ss.str()
-                        + string("]");
-                return false;
-            }
-
-            // Execute
-            sqlite3_step(statement);
-
-            // Finalize
-            sqlite3_finalize(statement);
-        } // NO PATH
-        else
-        {
-            e_.err = PATH_DOES_NOT_EXIST_ERROR;
-            e_.msg = string("Path (") + p.string() + string(") does not exist");
-            return false;
-        }
-    } // FOR
-
-    return true;
-}
-
-/*
- * Method to remove tag(s). Receives arguments as an input vector.
- */
-bool FlagHandler::removeTag(const vector<string>& fVec,
-        const vector<Flag>& extraFlags)
-{
-    // "All" flag set
-    bool all = find(extraFlags.begin(), extraFlags.end(), ALL)
-            != extraFlags.end();
-
-    // Removed rows
-    bool removedRows = false;
-
-    // Tag name
-    string tagName = (all) ? "" : fVec[0];
-
-    // Verify tag name
-    if (!tagName.empty() && !verifyInput(tagName, REGEX_MAIN_ALLOW_PERCENTAGE))
-    {
-        e_.err = VERIFICATION_ERROR;
-        e_.msg =
-                "Tag name can only contain numbers, letters, \"_\" and % (wildcard) for missing characters";
-        return false;
-    }
-
-#ifndef TEST
-    // Safety question
-    if (!q())
-        return false;
-#endif
-
-    // Remove tag with no path
-    if (fVec.size() == 1 && !all)
-    {
-        sqlite3_stmt* statement;
-        stringstream ss;
-
-        ss << "DELETE FROM tag WHERE tagname LIKE '" << tagName << "'";
-
-        // Prepare statement
-        if (sqlite3_prepare_v2(database_, ss.str().c_str(), -1, &statement,
-                0) != SQLITE_OK)
-        {
-            e_.err = STATEMENT_PREPARATION_ERROR;
-            e_.msg = string("Could not prepare statement [") + ss.str()
-                    + string("]");
-            return false;
-        }
-
-        // Execute
-        sqlite3_step(statement);
-
-        if (sqlite3_changes(database_) != 0)
-            removedRows = true;
-
-        // Finalize
-        sqlite3_finalize(statement);
-
-        return (removedRows) ? true : false;
-    } // IF NO PATH
-
-    unsigned int i = (all) ? 0 : 1;
-
-    // Remove tags with paths
-    // Go through path(s)
-    for (; i < fVec.size(); i++)
-    {
-        // File/folder string
-        string f = fVec[i];
-
-        // Path which is to be removed
-        boost::filesystem::path p(f);
-
-        // Check if path exists
-        if (boost::filesystem::is_directory(p) || boost::filesystem::exists(p))
-        {
-            sqlite3_stmt* statement;
-
-            stringstream ss;
-
-            // Delete all tags
-            if (all)
-                ss << "DELETE FROM tag WHERE path = '"
-                        << boost::filesystem::canonical(p).string() << "';";
-            else
-                // Delete specific tags from file(s)/folder(s)
-                ss << "DELETE FROM tag WHERE tagname LIKE '" << tagName
-                        << "' AND path = '"
-                        << boost::filesystem::canonical(p).string() << "';";
-
-            // Prepare statement
-            if (sqlite3_prepare_v2(database_, ss.str().c_str(), -1, &statement,
-                    0) != SQLITE_OK)
-            {
-                e_.err = STATEMENT_PREPARATION_ERROR;
-                e_.msg = string("Could not prepare statement [") + ss.str()
-                        + string("]");
-                return false;
-            }
-
-            // Execute
-            sqlite3_step(statement);
-
-            if (sqlite3_changes(database_) != 0)
-                removedRows = true;
-
-            // Finalize
-            sqlite3_finalize(statement);
-        } // NO PATH
-        else
-        {
-            e_.err = PATH_DOES_NOT_EXIST_ERROR;
-            e_.msg = string("Path (") + p.string() + string(") does not exist");
-            return false;
-        }
-    } // FOR
-
-    return (removedRows) ? true : false;
-}
-
-/*
- * Method to show tag(s). Receives arguments as an input vector.
- */
-bool FlagHandler::showTag(const vector<string>& fVec,
-        const vector<Flag>& extraFlags)
-{
-    // "All" flag set
-    bool all = find(extraFlags.begin(), extraFlags.end(), ALL)
-            != extraFlags.end();
-
-    // Tag name
-    string tagName = (all) ? "" : fVec[0];
-    bool foundTag = false;
-
-    // Verify tag name
-    if (!tagName.empty() && !verifyInput(tagName, REGEX_MAIN_ALLOW_PERCENTAGE))
-    {
-        e_.err = VERIFICATION_ERROR;
-        e_.msg =
-                "Tag name can only contain numbers, letters, \"_\" and % (wildcard) for missing characters";
-        return false;
-    }
-
-    // Show tag with no path
-    if (fVec.size() == 1 && !all)
-    {
-        sqlite3_stmt* statement;
-        stringstream ss;
-
-        ss << "SELECT * FROM tag WHERE tagname LIKE '" << tagName
-                << "' ORDER BY dt COLLATE NOCASE DESC";
-
-        // Prepare statement
-        if (sqlite3_prepare_v2(database_, ss.str().c_str(), -1, &statement,
-                0) != SQLITE_OK)
-        {
-            e_.err = STATEMENT_PREPARATION_ERROR;
-            e_.msg = string("Could not prepare statement [") + ss.str()
-                    + string("]");
-            return false;
-        }
-
-        int result = 0;
-
-        while (true)
-        {
-            // Execute
-            result = sqlite3_step(statement);
-
-            // Found row
-            if (result == SQLITE_ROW)
-            {
-                foundTag = true;
-                print_tag(statement);
-            }
-            else
-            {
-                break;
-            }
-        } // WHILE
-
-        // Finalize
-        sqlite3_finalize(statement);
-
-        return (!foundTag) ? false : true;
-    } // IF NO PATH
-
-    unsigned int i = (all) ? 0 : 1;
-
-    // Show tag with path(s)
-    // Go through path(s)
-    for (; i < fVec.size(); i++)
-    {
-        // File/folder string
-        string f = fVec[i];
-
-        // Path which is to be shown
-        boost::filesystem::path p(f);
-
-        // Check if path exists
-        if (boost::filesystem::is_directory(p) || boost::filesystem::exists(p))
-        {
-            sqlite3_stmt* statement;
-            stringstream ss;
-
-            // Select all
-            if (all)
-                ss << "SELECT * FROM tag WHERE path = '"
-                        << boost::filesystem::canonical(p).string()
-                        << "' ORDER BY dt COLLATE NOCASE DESC";
-            else
-                // Select specific tag
-                ss << "SELECT * FROM tag WHERE tagname LIKE '" << tagName
-                        << "' AND path = '"
-                        << boost::filesystem::canonical(p).string()
-                        << "' ORDER BY dt COLLATE NOCASE DESC";
-
-            // Prepare statement
-            if (sqlite3_prepare_v2(database_, ss.str().c_str(), -1, &statement,
-                    0) != SQLITE_OK)
-            {
-                e_.err = STATEMENT_PREPARATION_ERROR;
-                e_.msg = string("Could not prepare statement [") + ss.str()
-                        + string("]");
-                return false;
-            }
-
-            int result = 0;
-
-            while (true)
-            {
-                // Execute
-                result = sqlite3_step(statement);
-
-                // Found row
-                if (result == SQLITE_ROW)
-                {
-                    foundTag = true;
-                    print_tag(statement);
-                }
-                else
-                {
-                    break;
-                }
-            } // WHILE
-
-            // Finalize
-            sqlite3_finalize(statement);
-        } // NO PATH
-        else
-        {
-            e_.err = PATH_DOES_NOT_EXIST_ERROR;
-            e_.msg = string("Path (") + p.string() + string(") does not exist");
-            return false;
-        }
-    } // FOR
-
-    return (!foundTag) ? false : true;
 }
 
 /*
@@ -488,35 +139,6 @@ bool FlagHandler::processInput(const vector<string>& argVec, const Flag& flag,
 
     switch (flag)
     {
-    case TAG:
-#ifdef DEBUG
-        debug::dbgPrint("PROCESSING: tag");
-#endif
-        // Tag
-        if (!tag(argVec, extraFlags))
-            error = true;
-        break;
-
-    case REMOVE_TAG:
-#ifdef DEBUG
-        debug::dbgPrint("PROCESSING: remove tag");
-#endif
-        // Remove tag
-        if (!removeTag(argVec, extraFlags))
-            error = true;
-
-        break;
-
-    case SHOW_TAG:
-#ifdef DEBUG
-        debug::dbgPrint("PROCESSING: show tag");
-#endif
-        // Show tag
-        if (!showTag(argVec, extraFlags))
-            error = true;
-
-        break;
-
     case WRITE_KEY_VALUE:
 #ifdef DEBUG
         debug::dbgPrint("PROCESSING: write key-value");
@@ -576,8 +198,17 @@ bool FlagHandler::writeKV(const vector<string>& fVec,
         return false;
     }
 
+    unsigned int i = 2;
+
+    // Value empty
+    if (fVec.size() == 2)
+    {
+        i = 1;
+        value = "";
+    }
+
     // Go through path(s)
-    for (unsigned int i = 2; i < fVec.size(); i++)
+    for (; i < fVec.size(); i++)
     {
         // File/folder string
         string f = fVec[i];
@@ -649,7 +280,7 @@ bool FlagHandler::writeKV(const vector<string>& fVec,
 #ifndef TEST
     // Safety question
     if (!q())
-        return false;
+    return false;
 #endif
 
     // Remove key with no path
@@ -904,27 +535,6 @@ void FlagHandler::print_kv(sqlite3_stmt* statement)
     // Print path(s) found for specific key
     cout << "@" << keyStr << "\t\"" << valueStr << "\"\t" << pathStr << "\t["
             << dt << "]" << endl;
-}
-
-/*
- * This method prints tags.
- */
-void FlagHandler::print_tag(sqlite3_stmt* statement)
-{
-    if (statement == NULL)
-        return;
-
-    // Tag
-    string tag = (char*) sqlite3_column_text(statement, 1);
-
-    // Path
-    string pathStr = (char*) sqlite3_column_text(statement, 2);
-
-    // Datetime
-    string dt = (char*) sqlite3_column_text(statement, 3);
-
-    // Print path(s) found for specific tag
-    cout << "#" << tag << "\t" << pathStr << "\t[" << dt << "]" << endl;
 }
 
 /*

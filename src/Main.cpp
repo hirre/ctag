@@ -23,7 +23,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define VERSION "0.22"
+#define VERSION "0.3"
 
 #include <boost/program_options.hpp>
 #include <boost/lexical_cast.hpp>
@@ -50,28 +50,18 @@ int main(int argc, char** argv)
         // TODO: room for improved command descriptions
         // Create options
         bpo::options_description opts("Usage");
-        opts.add_options()("h", "help message")("t",
-                bpo::value<vector<string> >()->multitoken(),
-                "tag, [<tag> <file/folder> ...]")("r",
-                bpo::value<vector<string> >()->multitoken(),
-                "remove tag, [<tag> opt=[<file/folder> ...]], "
-                        "% allowed in tag name for missing characters")("s",
-                bpo::value<vector<string> >()->multitoken(),
-                "show tag, [<tag> opt=[<file/folder> ...]], "
-                        "% allowed in tag name for missing characters")("w",
+        opts.add_options()("h", "help message")("w",
                 bpo::value<vector<string> >()->multitoken(),
                 "write key-value, [<key> <value (with quotes)> <file/folder> ...]")(
                 "d", bpo::value<vector<string> >()->multitoken(),
                 "delete key-value, [<key> opt=[<file/folder> ...]], "
-                        "% allowed in tag name for missing characters")("p",
+                "% allowed in tag name for missing characters")("p",
                 bpo::value<vector<string> >()->multitoken(),
                 "print key-value, [<key> optional=[<file/folder> ...]], "
-                        "% allowed in tag name for missing characters")("a",
+                "% allowed in tag name for missing characters")("a",
                 "all flag, for specific file(s)/folder(s), "
-                        "together with -s to show all tags, or "
-                        "together with -r to remove all tags, or "
-                        "together with -p to print all key-values, or "
-                        "together with -d to delete all key-values")("v",
+                "together with -p to print all key-values, or "
+                "together with -d to delete all key-values")("v",
                 "version number");
 
         // Map for storing input
@@ -81,7 +71,7 @@ int main(int argc, char** argv)
         bpo::store(
                 bpo::command_line_parser(argc, argv).options(opts).style(
                         bpo::command_line_style::default_style
-                                | bpo::command_line_style::allow_long_disguise).run(),
+                        | bpo::command_line_style::allow_long_disguise).run(),
                 vm);
 
         // Manage "help" flag
@@ -107,64 +97,7 @@ int main(int argc, char** argv)
 
         // Manage all flag
         if (vm.count("a"))
-            extraFlags.push_back(maptag::ALL);
-
-        // Manage "tag" flag
-        if (vm.count("t"))
-        {
-#ifdef DEBUG
-            debug::dbgPrint(
-                    "tag | nr of args: "
-                            + boost::lexical_cast<string>(argc - 2));
-            debug::dbgPrintVector(vm["t"].as<vector<string> >());
-#endif
-            if ((argc - 2) >= 2)
-            {
-                processed = fHandler.processInput(vm["t"].as<vector<string> >(),
-                        maptag::TAG);
-            }
-            else
-                cerr << "Not the right number of arguments for tag flag."
-                        << endl;
-        }
-
-        // Manage "remove tag" flag
-        if (vm.count("r"))
-        {
-#ifdef DEBUG
-            debug::dbgPrint(
-                    "remove tag | nr of args: "
-                            + boost::lexical_cast<string>(argc - 2));
-            debug::dbgPrintVector(vm["r"].as<vector<string> >());
-#endif
-            if ((argc - 2) >= 1)
-            {
-                processed = fHandler.processInput(vm["r"].as<vector<string> >(),
-                        maptag::REMOVE_TAG, extraFlags);
-            }
-            else
-                cerr << "Not the right number of arguments for remove tag flag."
-                        << endl;
-        }
-
-        // Manage "show tag" flag
-        if (vm.count("s"))
-        {
-#ifdef DEBUG
-            debug::dbgPrint(
-                    "show tag | nr of args: "
-                            + boost::lexical_cast<string>(argc - 2));
-            debug::dbgPrintVector(vm["s"].as<vector<string> >());
-#endif
-            if ((argc - 2) >= 1)
-            {
-                processed = fHandler.processInput(vm["s"].as<vector<string> >(),
-                        maptag::SHOW_TAG, extraFlags);
-            }
-            else
-                cerr << "Not the right number of arguments for show tag flag."
-                        << endl;
-        }
+        extraFlags.push_back(maptag::ALL);
 
         // Manage "write key-value" flag
         if (vm.count("w"))
@@ -172,18 +105,18 @@ int main(int argc, char** argv)
 #ifdef DEBUG
             debug::dbgPrint(
                     "write key-value | nr of args: "
-                            + boost::lexical_cast<string>(argc - 2));
+                    + boost::lexical_cast<string>(argc - 2));
             debug::dbgPrintVector(vm["w"].as<vector<string> >());
 #endif
-            if ((argc - 2) >= 3)
+            if ((argc - 2) >= 2)
             {
                 processed = fHandler.processInput(vm["w"].as<vector<string> >(),
                         maptag::WRITE_KEY_VALUE, extraFlags);
             }
             else
-                cerr
-                        << "Not the right number of arguments for write key-value flag."
-                        << endl;
+            cerr
+            << "Not the right number of arguments for write key-value flag."
+            << endl;
         }
 
         // Manage "delete key-value" flag
@@ -192,7 +125,7 @@ int main(int argc, char** argv)
 #ifdef DEBUG
             debug::dbgPrint(
                     "delete key-value | nr of args: "
-                            + boost::lexical_cast<string>(argc - 2));
+                    + boost::lexical_cast<string>(argc - 2));
             debug::dbgPrintVector(vm["d"].as<vector<string> >());
 #endif
             if ((argc - 2) >= 1)
@@ -201,9 +134,9 @@ int main(int argc, char** argv)
                         maptag::DELETE_KEY_VALUE, extraFlags);
             }
             else
-                cerr
-                        << "Not the right number of arguments for delete key-value flag."
-                        << endl;
+            cerr
+            << "Not the right number of arguments for delete key-value flag."
+            << endl;
         }
 
         // Manage "print key-value" flag
@@ -212,7 +145,7 @@ int main(int argc, char** argv)
 #ifdef DEBUG
             debug::dbgPrint(
                     "print key-value | nr of args: "
-                            + boost::lexical_cast<string>(argc - 2));
+                    + boost::lexical_cast<string>(argc - 2));
             debug::dbgPrintVector(vm["p"].as<vector<string> >());
 #endif
             if ((argc - 2) >= 1)
@@ -221,9 +154,9 @@ int main(int argc, char** argv)
                         maptag::PRINT_KEY_VALUE, extraFlags);
             }
             else
-                cerr
-                        << "Not the right number of arguments for print key-value flag."
-                        << endl;
+            cerr
+            << "Not the right number of arguments for print key-value flag."
+            << endl;
         }
 
         // Manage "version" flag
@@ -234,10 +167,11 @@ int main(int argc, char** argv)
 
         // Manage error
         if (!processed && fHandler.getError().err != maptag::NO_ERROR)
-            cerr << fHandler.getError().msg << ".\t[" << fHandler.getError().err
-                    << "]" << endl;
+        cerr << fHandler.getError().msg << ".\t[" << fHandler.getError().err
+        << "]" << endl;
 
-    } catch (bpo::error& e)
+    }
+    catch (bpo::error& e)
     {
         // Write error to stderr
         cerr << "Invalid arguments." << endl;

@@ -32,9 +32,6 @@ namespace maptag
 enum Flag
 {
     ALL,
-    TAG,
-    REMOVE_TAG,
-    SHOW_TAG,
     WRITE_KEY_VALUE,
     DELETE_KEY_VALUE,
     PRINT_KEY_VALUE

@@ -50,37 +50,37 @@ BOOST_AUTO_TEST_CASE( init_test )
 }
 
 /*
- * Tag test for different inputs.
+ * Write key-value test for different inputs.
  */
-BOOST_AUTO_TEST_CASE( tag_test )
+BOOST_AUTO_TEST_CASE( write_key_val_test )
 {
     // Print headline
-    printHeadline("tag test");
+    printHeadline("write key-value test");
 
     // Clean up vector
     std::vector<std::string> cleanupVec;
     // Vector of characters
     std::vector<char> vec = genChars();
 
-    // Try tagging the wrong path
-    std::string tmp("TAG_wrong");
-    BOOST_ASSERT(runFlagWithInput("TAG_wrong", maptag::TAG, "crazy/path") == false);
+    // Try writing the wrong path
+    std::string tmp("write_wrong");
+    BOOST_ASSERT(runFlagWithInput("key_wrong", maptag::WRITE_KEY_VALUE, "crazy/path") == false);
     cleanupVec.push_back(tmp);
 
     for (unsigned int i = 0; i < vec.size(); i++)
     {
         std::string input("test_tag_");
-        input += vec[i];
-        bool b = runFlagWithInput(input, maptag::TAG);
+        input += vec[i] + "la la la";
+        bool b = runFlagWithInput(input, maptag::WRITE_KEY_VALUE);
 
-        // Correct input, try to tag it, expect true result, assert on false
+        // Correct input, try to write it, expect true result, assert on false
         if (verifyInput(input, REGEX_MAIN))
         {
             BOOST_ASSERT(b == true);
         }
         else
         {
-            // Incorrect input, try to tag it, expect false result, assert on true
+            // Incorrect input, try to write it, expect false result, assert on true
             BOOST_ASSERT(b == false);
         }
 
@@ -92,101 +92,76 @@ BOOST_AUTO_TEST_CASE( tag_test )
     // Clean up
     for (unsigned int i = 0; i < cleanupVec.size(); i++)
     {
-        runFlagWithInput(cleanupVec[i], maptag::REMOVE_TAG);
+        runFlagWithInput(cleanupVec[i], maptag::DELETE_KEY_VALUE);
     }
-}
-
-/*
- * Show tag test for different inputs.
- */
-BOOST_AUTO_TEST_CASE( show_tag_test )
-{
-    // Print headline
-    printHeadline("show tag test");
-
-    // Insert to db tags
-    runFlagWithInput("TAG1_TEST", maptag::TAG);
-    runFlagWithInput("TAG2_TEST", maptag::TAG);
-
-    // Show tag test, test different tag name variations for show flag
-    BOOST_ASSERT(
-            runFlagWithInput("tAg1_tEst", maptag::SHOW_TAG) == true);
-    BOOST_ASSERT(runFlagWithInput("test%", maptag::SHOW_TAG) == false);
-    BOOST_ASSERT(runFlagWithInput("%tEst", maptag::SHOW_TAG) == true);
-    BOOST_ASSERT(runFlagWithInput("", maptag::SHOW_TAG) == false);
-    // Show all for
-    BOOST_ASSERT(
-            runFlagWithInput("", maptag::SHOW_TAG, "wrongPath/",
-                    std::vector<maptag::Flag>(1, maptag::ALL)) == false);
-    BOOST_ASSERT(
-                runFlagWithInput("", maptag::SHOW_TAG, *testFilePath,
-                        std::vector<maptag::Flag>(1, maptag::ALL)) == true);
-
-    BOOST_ASSERT(runFlagWithInput("%test", maptag::SHOW_TAG, "") == true);
-
-    // Clean up
-    runFlagWithInput("TAG1_TEST", maptag::REMOVE_TAG);
-    runFlagWithInput("TAG2_TEST", maptag::REMOVE_TAG);
-}
-
-/*
- * Remove tag test for different inputs.
- */
-BOOST_AUTO_TEST_CASE( remove_tag_test )
-{
-    // Print headline
-    printHeadline("remove tag test");
-
-    // Insert to db tags
-    runFlagWithInput("TAG1_TEST", maptag::TAG);
-    runFlagWithInput("TAG2_TEST", maptag::TAG);
-    runFlagWithInput("TAG3_TEST", maptag::TAG);
-
-    // Test removal
-    BOOST_ASSERT(
-            runFlagWithInput("tAg1_tEsta", maptag::REMOVE_TAG) == false);
-    BOOST_ASSERT(
-            runFlagWithInput("tAg2_tEsta", maptag::REMOVE_TAG) == false);
-    BOOST_ASSERT(runFlagWithInput("%1_tEst", maptag::REMOVE_TAG) == true);
-    BOOST_ASSERT(
-            runFlagWithInput("TAG2_TEST", maptag::REMOVE_TAG,
-                    "wrongPath/") == false);
-    BOOST_ASSERT(
-            runFlagWithInput("TAG2_TEST", maptag::REMOVE_TAG) == true);
-
-    BOOST_ASSERT(runFlagWithInput("%3_test", maptag::REMOVE_TAG, "") == true);
-
-    // Clean up
-    runFlagWithInput("TAG1_TEST", maptag::REMOVE_TAG);
-    runFlagWithInput("TAG2_TEST", maptag::REMOVE_TAG);
-    // Remove all tags for test file
-    runFlagWithInput("", maptag::REMOVE_TAG, *testFilePath,
-            std::vector<maptag::Flag>(1, maptag::ALL));
-
-}
-
-/*
- * Write key-value test for different inputs.
- */
-BOOST_AUTO_TEST_CASE( write_kv_test )
-{
-    // TODO: implement write_kv_test
-}
-
-/*
- * Delete key-value test for different inputs.
- */
-BOOST_AUTO_TEST_CASE( delete_kv_test )
-{
-    // TODO: implement delete_kv_test
 }
 
 /*
  * Print key-value test for different inputs.
  */
-BOOST_AUTO_TEST_CASE( print_kv_test )
+BOOST_AUTO_TEST_CASE( print_key_value_test )
 {
-    // TODO: implement print_kv_test
+    // Print headline
+    printHeadline("print key-value test");
+
+    // Insert to db tags
+    runFlagWithInput("T1_TEST", maptag::WRITE_KEY_VALUE);
+    runFlagWithInput("T2_TEST", maptag::WRITE_KEY_VALUE);
+
+    // Print key-value test, test different key name variations for print flag
+    BOOST_ASSERT(
+            runFlagWithInput("t1_tEst", maptag::PRINT_KEY_VALUE) == true);
+    BOOST_ASSERT(runFlagWithInput("test%", maptag::PRINT_KEY_VALUE) == false);
+    BOOST_ASSERT(runFlagWithInput("%tEst", maptag::PRINT_KEY_VALUE) == true);
+    BOOST_ASSERT(runFlagWithInput("", maptag::PRINT_KEY_VALUE) == false);
+    // Show all for
+    BOOST_ASSERT(
+            runFlagWithInput("", maptag::PRINT_KEY_VALUE, "wrongPath/",
+                    std::vector<maptag::Flag>(1, maptag::ALL)) == false);
+    BOOST_ASSERT(
+                runFlagWithInput("", maptag::PRINT_KEY_VALUE, *testFilePath,
+                        std::vector<maptag::Flag>(1, maptag::ALL)) == true);
+
+    BOOST_ASSERT(runFlagWithInput("%test", maptag::PRINT_KEY_VALUE, "") == true);
+
+    // Clean up
+    runFlagWithInput("T1_TEST", maptag::DELETE_KEY_VALUE);
+    runFlagWithInput("T2_TEST", maptag::DELETE_KEY_VALUE);
+}
+
+/*
+ * Delete key-value test for different inputs.
+ */
+BOOST_AUTO_TEST_CASE( delete_key_value_test )
+{
+    // Print headline
+    printHeadline("delete key-value test");
+
+    // Insert to db tags
+    runFlagWithInput("T1_TEST", maptag::WRITE_KEY_VALUE);
+    runFlagWithInput("T2_TEST", maptag::WRITE_KEY_VALUE);
+    runFlagWithInput("T3_TEST", maptag::WRITE_KEY_VALUE);
+
+    // Test removal
+    BOOST_ASSERT(
+            runFlagWithInput("t1_tEsta", maptag::DELETE_KEY_VALUE) == false);
+    BOOST_ASSERT(
+            runFlagWithInput("t2_tEsta", maptag::DELETE_KEY_VALUE) == false);
+    BOOST_ASSERT(runFlagWithInput("%1_tEst", maptag::DELETE_KEY_VALUE) == true);
+    BOOST_ASSERT(
+            runFlagWithInput("T2_TEST", maptag::DELETE_KEY_VALUE,
+                    "wrongPath/") == false);
+    BOOST_ASSERT(
+            runFlagWithInput("T2_TEST", maptag::DELETE_KEY_VALUE) == true);
+
+    BOOST_ASSERT(runFlagWithInput("%3_test", maptag::DELETE_KEY_VALUE, "") == true);
+
+    // Clean up
+    runFlagWithInput("T1_TEST", maptag::DELETE_KEY_VALUE);
+    runFlagWithInput("T2_TEST", maptag::DELETE_KEY_VALUE);
+    // Remove all tags for test file
+    runFlagWithInput("", maptag::DELETE_KEY_VALUE, *testFilePath,
+            std::vector<maptag::Flag>(1, maptag::ALL));
 }
 
 /*
@@ -197,7 +172,7 @@ BOOST_AUTO_TEST_CASE( finish_test )
     // Print headline
     printHeadline("finish test");
     // Remove all tags for test file
-    runFlagWithInput("", maptag::REMOVE_TAG, *testFilePath,
+    runFlagWithInput("", maptag::DELETE_KEY_VALUE, *testFilePath,
                 std::vector<maptag::Flag>(1, maptag::ALL));
     // Finish test
     finish();
