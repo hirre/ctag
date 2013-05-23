@@ -44,6 +44,4 @@ DebugWin/
 .settings/
 /DebugMac
 script/
-/TestMac
-/ReleaseWin
 /TestWin
