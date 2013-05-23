@@ -45,3 +45,5 @@ DebugWin/
 /DebugMac
 script/
 /TestMac
+/ReleaseWin
+/TestWin
