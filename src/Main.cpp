@@ -55,10 +55,10 @@ int main(int argc, char** argv)
                 "write key-value, [<key> <value (with quotes)> <file/folder> ...]")(
                 "d", bpo::value<vector<string> >()->multitoken(),
                 "delete key-value, [<key> opt=[<file/folder> ...]], "
-                "% allowed in tag name for missing characters")("p",
+                "% allowed in <key> for missing characters")("p",
                 bpo::value<vector<string> >()->multitoken(),
                 "print key-value, [<key> opt=[<file/folder> ...]], "
-                "% allowed in tag name for missing characters")("a",
+                "% allowed in <key> for missing characters")("a",
                 "all flag, for specific file(s)/folder(s), "
                 "together with -p to print all key-values, or "
                 "together with -d to delete all key-values")("v",
