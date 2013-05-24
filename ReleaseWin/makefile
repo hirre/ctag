@@ -47,7 +47,7 @@ all: maptag
 maptag: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MinGW C++ Linker'
-	g++ -L"C:\lib\boost\boost_1_53_0\stage\lib" -Bstatic -o "maptag" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++ -L"C:\lib\boost\boost_1_53_0\stage\lib" -static -o "maptag" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
