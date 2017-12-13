@@ -1,7 +1,7 @@
 maptag
 ====
 
-Command line program to tag files and folders in the OS using a key-value system. Tested on Windows 7 and Mac OSX 10.8.3.
+A simple command line program to tag files and folders in the OS using a key-value system.
 
 ### USAGE 
 maptag [flag] [arguments]
