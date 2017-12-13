@@ -52,6 +52,3 @@ Manual compilation example (OS X 10.8.3, g++ >=4.7):
 - Linker uses specific static boost libraries and sqlite3.o.
 - It is required that if you use Windows, environmental variables %USERPROFILE% or %HOMEDRIVE% and %HOMEPATH% must be set (usually they are). In OSX or Linux $HOME must be set (usually is).
 - If "TEST" is defined you need to dynamically link "boost_unit_test_framework" by setting the corresponding environmental variable for dynamic libraries (OS dependent).
- 
-### LICENSE
-[GNU General Public License v3](http://www.gnu.org/licenses/gpl.html)
